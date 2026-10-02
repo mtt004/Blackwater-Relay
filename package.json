@@ -1,0 +1,22 @@
+{
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "node scripts/lint.mjs",
+    "test": "node scripts/run-tests.mjs",
+    "smoke": "node scripts/integration-smoke.mjs",
+    "validate:railway": "node scripts/validate-railway-upgrade.mjs",
+    "validate:operations": "node scripts/validate-rail-operations.mjs",
+    "check": "node scripts/lint.mjs && node scripts/run-tests.mjs && node scripts/integration-smoke.mjs && node scripts/validate-railway-upgrade.mjs && node scripts/validate-rail-operations.mjs && node scripts/station-walk-collision-validation.mjs && node scripts/validate-aviation-network.mjs",
+    "benchmark": "node --expose-gc scripts/performance-benchmark.mjs",
+    "audit:hitboxes": "node scripts/audit-hitboxes.mjs benchmarks/hitbox-audit-final.json",
+    "test:diagnostics": "node scripts/diagnostics-tests.mjs",
+    "benchmark:diagnostics": "node scripts/diagnostics-overhead.mjs",
+    "example:diagnostics": "node scripts/generate-diagnostics-example.mjs",
+    "validate:boundaries": "node scripts/object-boundary-validation.mjs",
+    "validate:station-collisions": "node scripts/station-walk-collision-validation.mjs",
+    "audit:stair-collision": "node scripts/stair-collision-volume-audit.mjs benchmarks/stair-collision-volume-audit.json",
+    "validate:aviation": "node scripts/validate-aviation-network.mjs",
+    "validate:flight": "node scripts/validate-flight-sim.mjs"
+  }
+}

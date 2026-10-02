@@ -1,0 +1,47 @@
+{
+  "measuredAt": "2026-07-21T15:57:54.839Z",
+  "runtime": "Node v22.16.0",
+  "methodology": {
+    "disabledIterations": 400000,
+    "enabledIterations": 12000,
+    "repeats": 7,
+    "enabledRuntimeShape": {
+      "trains": 12,
+      "blocks": 304,
+      "signals": 304,
+      "platforms": 45,
+      "trafficVehicles": 64,
+      "pedestrians": 120,
+      "aircraft": 3
+    },
+    "note": "Synthetic API microbenchmark; not a browser FPS benchmark."
+  },
+  "disabled": {
+    "medianTotalMs": 3.894812999999999,
+    "baselineLoopMedianMs": 0.34338799999999736,
+    "estimatedNetMicrosecondsPerFrame": 0.008878562500000005,
+    "rawMicrosecondsPerFrame": 0.009737032499999998,
+    "runsMs": [
+      11.469259999999998,
+      5.290050999999991,
+      3.894812999999999,
+      3.329825999999997,
+      3.7936400000000106,
+      3.9890630000000016,
+      3.4106510000000014
+    ]
+  },
+  "enabled": {
+    "medianTotalMs": 83.44237499999997,
+    "microsecondsPerFrame": 6.9535312499999975,
+    "runsMs": [
+      129.49755900000002,
+      104.20625700000002,
+      83.44237499999997,
+      85.92159799999996,
+      74.70097799999996,
+      75.48393300000009,
+      76.07478900000001
+    ]
+  }
+}

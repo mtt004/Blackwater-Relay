@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-10-02T17:34:47.880Z",
+  "entities": {
+    "trains": 12,
+    "traffic": 68,
+    "pedestrians": 72,
+    "aircraft": 10,
+    "blocks": 304,
+    "signals": 304,
+    "platforms": 45
+  },
+  "systems": {
+    "frame": {
+      "meanMs": 2.0965690066666895,
+      "medianMs": 1.4924810000002253,
+      "p95Ms": 6.401286999999684,
+      "p99Ms": 9.059677999999622,
+      "maxMs": 9.567160000000513,
+      "samples": 300
+    },
+    "railway": {
+      "meanMs": 0.9059056466666485,
+      "medianMs": 0.24813499999982014,
+      "p95Ms": 5.087725999999748,
+      "p99Ms": 7.232330999999249,
+      "maxMs": 8.855760999999802,
+      "samples": 300
+    },
+    "traffic": {
+      "meanMs": 0.681631246666669,
+      "medianMs": 0.5925539999998364,
+      "p95Ms": 1.1946820000002845,
+      "p99Ms": 1.9324360000000524,
+      "maxMs": 3.026104999999916,
+      "samples": 150
+    },
+    "pedestrians": {
+      "meanMs": 0.44506583999995203,
+      "medianMs": 0.40683399999943504,
+      "p95Ms": 0.6445919999996477,
+      "p99Ms": 0.8890810000002602,
+      "maxMs": 1.526412999999593,
+      "samples": 100
+    },
+    "collisions": {
+      "meanMs": 0.109919570000017,
+      "medianMs": 0.09053700000004028,
+      "p95Ms": 0.24582100000043283,
+      "p99Ms": 0.3689060000006066,
+      "maxMs": 0.8161409999993339,
+      "samples": 300
+    },
+    "police": {
+      "meanMs": 0.006913066666644833,
+      "medianMs": 0.005087999999886961,
+      "p95Ms": 0.012448999999833177,
+      "p99Ms": 0.034411999999974796,
+      "maxMs": 0.15699700000004668,
+      "samples": 300
+    },
+    "airport": {
+      "meanMs": 0.07420625333334405,
+      "medianMs": 0.05900900000051479,
+      "p95Ms": 0.16747299999951792,
+      "p99Ms": 0.24844500000017433,
+      "maxMs": 0.392282000000705,
+      "samples": 300
+    },
+    "streaming": {
+      "meanMs": 0.24298794333331594,
+      "medianMs": 0.15440299999954732,
+      "p95Ms": 0.5589030000001003,
+      "p99Ms": 1.8236909999995987,
+      "maxMs": 6.088997000000745,
+      "samples": 300
+    },
+    "player": {
+      "meanMs": 0.18801636999997148,
+      "medianMs": 0.15632600000026287,
+      "p95Ms": 0.39579700000012963,
+      "p99Ms": 0.5168000000003303,
+      "maxMs": 2.510858999999982,
+      "samples": 300
+    }
+  },
+  "railLookup": {
+    "iterations": 200000,
+    "totalMs": 21.202775000000656
+  },
+  "railOperations": {
+    "meanMs": 0.13880743333333156,
+    "medianMs": 0.10577899999952933,
+    "p95Ms": 0.24086299999999028,
+    "p99Ms": 0.5228990000005069,
+    "maxMs": 0.9318359999997483,
+    "samples": 150
+  },
+  "trainHeadPlacement": {
+    "iterations": 120000,
+    "totalMs": 20.516945000000305
+  },
+  "trainFormationPlacement": {
+    "iterations": 12000,
+    "totalMs": 30.146382999999332
+  },
+  "dispatcherMs": 0.05660500000067259,
+  "occupancyMs": 0.022633999999925436,
+  "heap": {
+    "beforeBytes": 11237328,
+    "afterBytes": 103333616,
+    "deltaBytes": 92096288
+  },
+  "scene": {
+    "objects": 29194,
+    "visibleObjects": 7630,
+    "drawables": 7225,
+    "triangles": 499608,
+    "lines": 24698,
+    "points": 160,
+    "uniqueGeometries": 2965,
+    "uniqueMaterials": 2181,
+    "geometryBytes": 3828572
+  },
+  "denseStationScene": {
+    "objects": 29194,
+    "visibleObjects": 11835,
+    "drawables": 11134,
+    "triangles": 689280,
+    "lines": 24698,
+    "points": 160,
+    "uniqueGeometries": 2965,
+    "uniqueMaterials": 2181,
+    "geometryBytes": 3828572
+  },
+  "chunkStats": {
+    "current": "1:-2",
+    "preload": "2:-2",
+    "neighbours": 5,
+    "ahead": 2,
+    "visible": 12,
+    "buildingOnly": 1,
+    "lowBuildings": 7,
+    "preloaded": 2,
+    "cached": 18,
+    "queued": 0,
+    "total": 56,
+    "queueMs": 0.00012100000003556488,
+    "buildMs": 0,
+    "builtThisFrame": 0,
+    "maximumBuildMs": 5.4749799999999595
+  }
+}

@@ -1,0 +1,636 @@
+{
+  "schemaVersion": 2,
+  "diagnostics": {
+    "limits": {
+      "maxEvents": 50000,
+      "maxCollisions": 10000,
+      "maxWarnings": 5000,
+      "maxErrors": 2000,
+      "maxPerformanceSamples": 18000,
+      "maxLongFrames": 5000,
+      "maxObjectBoundaries": 15000
+    },
+    "sampleIntervalMs": 125,
+    "contactEndDelayMs": 160,
+    "settings": {
+      "objectBoundaries": true
+    }
+  },
+  "session": {
+    "id": "a67c2baa-f871-4e4c-b457-6547871b2192",
+    "startedAt": "2026-07-21T15:12:18.000Z",
+    "endedAt": "2026-07-21T15:12:19.600Z",
+    "durationSeconds": 1.6,
+    "reasonEnded": "manual-toggle",
+    "complete": true,
+    "gameVersion": "2026.07.21-diagnostics-boundaries-1",
+    "userAgent": "Example Browser",
+    "viewport": {
+      "width": 1920,
+      "height": 1080,
+      "devicePixelRatio": 1.25
+    }
+  },
+  "configuration": {
+    "fixedStep": 0.016666666666666666,
+    "trains": 12,
+    "trafficVehicles": 64,
+    "pedestrians": 120,
+    "diagnosticExample": true
+  },
+  "summary": {
+    "totalFrames": 2,
+    "performanceSamples": 2,
+    "medianFrameMs": 17,
+    "p95FrameMs": 18,
+    "p99FrameMs": 18,
+    "maximumFrameMs": 18,
+    "longFrameCount": 2,
+    "severeFrameCount": 0,
+    "systems": {
+      "simulation": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      },
+      "render": {
+        "meanMs": 4.399999999999977,
+        "maxMs": 4.399999999999977,
+        "samples": 1
+      },
+      "railway": {
+        "meanMs": 0.8000000000000114,
+        "maxMs": 0.8000000000000114,
+        "samples": 1
+      },
+      "dispatcher": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      },
+      "traffic": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      },
+      "pedestrians": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      },
+      "collisions": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      },
+      "police": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      },
+      "airport": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      },
+      "player": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      },
+      "streaming": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      },
+      "chunkGeneration": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      },
+      "hud": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      },
+      "minimap": {
+        "meanMs": 0,
+        "maxMs": 0,
+        "samples": 0
+      }
+    },
+    "collisionCountByCategory": {
+      "walking-player-to-station-blocker": 1
+    },
+    "warningCountBySystem": {
+      "dispatcher": 1
+    },
+    "errorCount": 1,
+    "eventCount": 6,
+    "objectBoundaryCaptureEnabled": true,
+    "objectBoundaryCount": 2,
+    "objectBoundaryCountByCategory": {
+      "building": 1,
+      "structure": 1
+    },
+    "chunkGenerationCount": 0,
+    "maximumChunkGenerationMs": 0,
+    "counters": {
+      "collision:walking-player-to-station-blocker": 1
+    },
+    "droppedRecords": {
+      "events": 0,
+      "collisions": 0,
+      "warnings": 0,
+      "errors": 0,
+      "performanceSamples": 0,
+      "longFrames": 0,
+      "objectBoundaries": 0
+    },
+    "activeContactsAtExport": 0
+  },
+  "objectBoundaries": {
+    "captureEnabled": true,
+    "count": 2,
+    "records": [
+      {
+        "id": "bld-0042",
+        "category": "building",
+        "objectType": "cbd-building",
+        "source": "procedural-city",
+        "position": {
+          "x": 104,
+          "y": 0,
+          "z": -68
+        },
+        "rotationY": 0.14,
+        "dimensions": {
+          "width": 18,
+          "depth": 12,
+          "height": 31,
+          "minimumY": 0,
+          "maximumY": 31
+        },
+        "footprintVertices": [
+          {
+            "x": 95.93,
+            "z": -75.2
+          },
+          {
+            "x": 113.75,
+            "z": -72.69
+          },
+          {
+            "x": 112.07,
+            "z": -60.8
+          },
+          {
+            "x": 94.25,
+            "z": -63.31
+          }
+        ],
+        "collisionProfile": {
+          "halfWidth": 8.92,
+          "halfDepth": 5.92,
+          "rotation": 0.14
+        },
+        "district": "cbd",
+        "chunkKey": "0:-1"
+      },
+      {
+        "id": "station:industrial-exchange:ticket-desk",
+        "category": "structure",
+        "objectType": "station-ticket-desk",
+        "source": "rail-walk-blocker",
+        "position": {
+          "x": 118.1,
+          "y": 0.04,
+          "z": -82.1
+        },
+        "rotationY": 0,
+        "dimensions": {
+          "width": 2.45,
+          "depth": 0.92,
+          "height": 1.18,
+          "minimumY": 0.04,
+          "maximumY": 1.22
+        },
+        "footprintVertices": [
+          {
+            "x": 116.875,
+            "z": -82.56
+          },
+          {
+            "x": 119.325,
+            "z": -82.56
+          },
+          {
+            "x": 119.325,
+            "z": -81.64
+          },
+          {
+            "x": 116.875,
+            "z": -81.64
+          }
+        ],
+        "collisionProfile": {
+          "halfWidth": 1.21,
+          "halfLength": 0.45,
+          "minimumHeight": 0.04,
+          "maximumHeight": 1.22
+        },
+        "stationId": "industrial-exchange",
+        "structureName": "ticket-desk"
+      }
+    ]
+  },
+  "performance": {
+    "sampleIntervalMs": 125,
+    "fields": [
+      "timeMs",
+      "frameMs",
+      "simulationMs",
+      "renderMs",
+      "railwayMs",
+      "dispatcherMs",
+      "trafficMs",
+      "pedestriansMs",
+      "collisionsMs",
+      "policeMs",
+      "airportMs",
+      "playerMs",
+      "streamingMs",
+      "chunkGenerationMs",
+      "hudMs",
+      "minimapMs",
+      "drawCalls",
+      "triangles",
+      "lines",
+      "points",
+      "geometries",
+      "textures",
+      "visibleObjects",
+      "heapBytes"
+    ],
+    "samples": [
+      [
+        278,
+        18,
+        0,
+        4.399999999999977,
+        0.8000000000000114,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5223,
+        1864000,
+        2140,
+        96,
+        2286,
+        72,
+        6810,
+        0
+      ],
+      [
+        637,
+        17,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5231,
+        1869000,
+        2140,
+        96,
+        2287,
+        72,
+        6822,
+        0
+      ]
+    ],
+    "detailedFrames": [
+      {
+        "timeMs": 278,
+        "simulationTime": 0,
+        "frameMs": 18,
+        "systems": {
+          "simulation": 0,
+          "render": 4.399999999999977,
+          "railway": 0.8000000000000114,
+          "dispatcher": 0,
+          "traffic": 0,
+          "pedestrians": 0,
+          "collisions": 0,
+          "police": 0,
+          "airport": 0,
+          "player": 0,
+          "streaming": 0,
+          "chunkGeneration": 0,
+          "hud": 0,
+          "minimap": 0
+        },
+        "reasons": [
+          "long-frame",
+          "player:entered-train"
+        ]
+      },
+      {
+        "timeMs": 637,
+        "simulationTime": 0,
+        "frameMs": 17,
+        "systems": {
+          "simulation": 0,
+          "render": 0,
+          "railway": 0,
+          "dispatcher": 0,
+          "traffic": 0,
+          "pedestrians": 0,
+          "collisions": 0,
+          "police": 0,
+          "airport": 0,
+          "player": 0,
+          "streaming": 0,
+          "chunkGeneration": 0,
+          "hud": 0,
+          "minimap": 0
+        },
+        "reasons": [
+          "long-frame",
+          "collision:walking-player-to-station-blocker"
+        ]
+      }
+    ],
+    "longFrames": [
+      {
+        "timeMs": 278,
+        "simulationTime": 0,
+        "frameMs": 18,
+        "systems": {
+          "simulation": 0,
+          "render": 4.399999999999977,
+          "railway": 0.8000000000000114,
+          "dispatcher": 0,
+          "traffic": 0,
+          "pedestrians": 0,
+          "collisions": 0,
+          "police": 0,
+          "airport": 0,
+          "player": 0,
+          "streaming": 0,
+          "chunkGeneration": 0,
+          "hud": 0,
+          "minimap": 0
+        },
+        "reasons": [
+          "long-frame",
+          "player:entered-train"
+        ]
+      },
+      {
+        "timeMs": 637,
+        "simulationTime": 0,
+        "frameMs": 17,
+        "systems": {
+          "simulation": 0,
+          "render": 0,
+          "railway": 0,
+          "dispatcher": 0,
+          "traffic": 0,
+          "pedestrians": 0,
+          "collisions": 0,
+          "police": 0,
+          "airport": 0,
+          "player": 0,
+          "streaming": 0,
+          "chunkGeneration": 0,
+          "hud": 0,
+          "minimap": 0
+        },
+        "reasons": [
+          "long-frame",
+          "collision:walking-player-to-station-blocker"
+        ]
+      }
+    ],
+    "systemNames": [
+      "simulation",
+      "render",
+      "railway",
+      "dispatcher",
+      "traffic",
+      "pedestrians",
+      "collisions",
+      "police",
+      "airport",
+      "player",
+      "streaming",
+      "chunkGeneration",
+      "hud",
+      "minimap"
+    ]
+  },
+  "events": [
+    {
+      "timeMs": 0,
+      "simulationTime": 0,
+      "category": "session",
+      "type": "diagnostics-enabled",
+      "data": {
+        "configurationCaptured": true,
+        "diagnosticSettings": {
+          "objectBoundaries": true
+        }
+      }
+    },
+    {
+      "timeMs": 0,
+      "simulationTime": 0,
+      "category": "diagnostics",
+      "type": "object-boundary-catalogue-captured",
+      "data": {
+        "source": "session-start",
+        "added": 2,
+        "total": 2,
+        "providerRecords": 2,
+        "dropped": 0
+      }
+    },
+    {
+      "timeMs": 0,
+      "simulationTime": 0,
+      "category": "configuration",
+      "type": "runtime-initialised",
+      "data": {
+        "trains": 1,
+        "railBlocks": 1,
+        "signals": 1,
+        "platforms": 0,
+        "trafficVehicles": 0,
+        "pedestrians": 0,
+        "aircraft": 0,
+        "chunks": 0
+      }
+    },
+    {
+      "timeMs": 0,
+      "simulationTime": 0,
+      "category": "railway",
+      "type": "service-initialised",
+      "entityId": "city-stopper-01",
+      "position": {
+        "x": 120.5,
+        "y": 7.2,
+        "z": -84.9
+      },
+      "data": {
+        "trainId": "city-stopper-01",
+        "serviceId": "city-stopper-01",
+        "routeId": "city",
+        "trackIndex": 0,
+        "direction": 1
+      }
+    },
+    {
+      "timeMs": 120,
+      "simulationTime": 0,
+      "category": "player",
+      "type": "entered-train",
+      "entityId": "city-stopper-01",
+      "position": {
+        "x": 120.5,
+        "y": 7.2,
+        "z": -84.9
+      },
+      "data": {
+        "trainId": "city-stopper-01",
+        "mode": "passenger",
+        "vehicleIndex": 2,
+        "doorSide": -1,
+        "platformSide": -1
+      }
+    },
+    {
+      "timeMs": 1600,
+      "simulationTime": 0,
+      "category": "session",
+      "type": "diagnostics-disabled",
+      "data": {
+        "reasonEnded": "manual-toggle"
+      }
+    }
+  ],
+  "collisions": [
+    {
+      "timeMs": 420,
+      "simulationTime": 0,
+      "category": "collision",
+      "type": "collision-start",
+      "pairKey": "player|station:industrial-exchange:wall-east|station-blocker",
+      "collisionCategory": "walking-player-to-station-blocker",
+      "entityA": {
+        "id": "player",
+        "type": "walking-player",
+        "position": {
+          "x": 118.4,
+          "y": 7.2,
+          "z": -82.1
+        },
+        "speed": 6,
+        "controlledByPlayer": true
+      },
+      "entityB": {
+        "id": "station:industrial-exchange:wall-east",
+        "type": "station-blocker",
+        "position": {
+          "x": 118.1,
+          "y": 0,
+          "z": -82.1
+        },
+        "stationId": "industrial-exchange"
+      },
+      "contactPoint": {
+        "x": 118.35,
+        "y": 1,
+        "z": -82.1
+      },
+      "clearanceRadius": 0.2,
+      "penetrationDepth": 0.04,
+      "appliedCorrection": {
+        "movementRejected": true
+      },
+      "resolved": true,
+      "reason": "Walking clearance circle entered fitted station wall blocker",
+      "profile": {
+        "name": "station-wall-east",
+        "dimensions": {
+          "halfLength": 6.8,
+          "halfWidth": 0.14,
+          "minimumHeight": 0,
+          "maximumHeight": 3.1
+        }
+      }
+    },
+    {
+      "timeMs": 637,
+      "simulationTime": 0,
+      "category": "collision",
+      "type": "collision-end",
+      "pairKey": "player|station:industrial-exchange:wall-east|station-blocker",
+      "collisionCategory": "walking-player-to-station-blocker",
+      "entityAId": "player",
+      "entityBId": "station:industrial-exchange:wall-east",
+      "durationMs": 217,
+      "reason": "separated"
+    }
+  ],
+  "warnings": [
+    {
+      "timeMs": 900,
+      "simulationTime": 0,
+      "category": "dispatcher",
+      "type": "warning",
+      "system": "dispatcher",
+      "message": "Train waiting unusually long",
+      "data": {
+        "trainId": "city-stopper-01",
+        "signalAspect": "red",
+        "waitSeconds": 78
+      }
+    }
+  ],
+  "errors": [
+    {
+      "timeMs": 1100,
+      "simulationTime": 0,
+      "category": "error",
+      "type": "application-error",
+      "error": {
+        "name": "Error",
+        "message": "Example handled diagnostics error",
+        "stack": "Error: Example handled diagnostics error\n    at file:///mnt/data/citydiag-work/explorable-city-sim-railway-operations-signalling/scripts/generate-diagnostics-example.mjs:24:27\n    at ModuleJob.run (node:internal/modules/esm/module_job:274:25)\n    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:644:26)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)"
+      },
+      "context": {
+        "system": "example",
+        "recoverable": true
+      }
+    }
+  ]
+}

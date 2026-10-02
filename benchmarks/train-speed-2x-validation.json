@@ -1,0 +1,56 @@
+{
+  "feature": "railway-speed-multiplier",
+  "multiplier": 2,
+  "comparisonSimulationSeconds": 300,
+  "baseline": {
+    "averageServicePeakKmh": 69.3246357733142,
+    "maximumObservedKmh": 88.57671858451842,
+    "minimumServicePeakKmh": 52.2,
+    "routeLimitsKmh": [
+      160,
+      120,
+      100
+    ],
+    "deadlockRecoveries": 0
+  },
+  "final": {
+    "averageServicePeakKmh": 140.5721869253407,
+    "maximumObservedKmh": 177.15343716903556,
+    "minimumServicePeakKmh": 123.87343716903565,
+    "routeLimitsKmh": [
+      320,
+      240,
+      200
+    ],
+    "deadlockRecoveries": 0
+  },
+  "ratios": {
+    "averageServicePeak": 2.027737836012584,
+    "maximumObserved": 2,
+    "cityStoppingLimit": 2,
+    "cityLimitedLimit": 2,
+    "airportLimit": 2
+  },
+  "operationalValidation": {
+    "trains": 12,
+    "blocks": 304,
+    "signals": 304,
+    "platforms": 45,
+    "protectedTransfers": 13,
+    "maximumTrainsWaiting": 5,
+    "maximumActiveJunctionRoutes": 1,
+    "blockConflicts": 0,
+    "deadlockRecoveries": 0
+  },
+  "tests": {
+    "regression": "109/109 passed",
+    "diagnostics": "17/17 passed",
+    "integrationSmoke": "passed",
+    "railwayOperations": "passed",
+    "railwayUpgrade": "passed",
+    "fourTrack": "passed",
+    "stationTraversal": "passed",
+    "stationCollision": "passed",
+    "trainInteriorVisibility": "passed"
+  }
+}

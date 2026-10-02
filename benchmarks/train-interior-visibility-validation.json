@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "coaches": 5,
+  "transparentWindowRays": 80,
+  "opaqueWindowHits": 0,
+  "openDoorwayRays": 20,
+  "blockedOpenDoors": 0,
+  "passengerEyeY": 2.66,
+  "windowBottom": 1.8,
+  "windowTop": 2.8,
+  "pointerLockRequested": true,
+  "yawChangeRadians": -0.28,
+  "pitchChangeRadians": 0.081,
+  "repeatedDeltaRadians": 0,
+  "nearbyRearCoachInteriorVisible": true,
+  "trainInteriorDistance": 72
+}

@@ -1,0 +1,471 @@
+{
+  "generatedAt": "2026-07-20T16:27:16.685Z",
+  "roadVehicles": [
+    {
+      "kind": "car",
+      "visual": {
+        "minX": -1.0439,
+        "maxX": 1.0439,
+        "minY": 0.005,
+        "maxY": 1.6238,
+        "minZ": -2.41,
+        "maxZ": 2.41,
+        "width": 2.0878,
+        "height": 1.6188,
+        "length": 4.82
+      },
+      "hitbox": {
+        "minX": -0.93,
+        "maxX": 0.93,
+        "minZ": -2.31,
+        "maxZ": 2.31,
+        "width": 1.86,
+        "length": 4.62,
+        "area": 7.9704
+      },
+      "widthDelta": -0.2278,
+      "lengthDelta": -0.2,
+      "decision": "retained",
+      "reason": "The compound footprint is already inside the complete rendered bounds and excludes mirrors, tyres, lamps and plates."
+    },
+    {
+      "kind": "hatchback",
+      "visual": {
+        "minX": -1.0243,
+        "maxX": 1.0243,
+        "minY": 0.0049,
+        "maxY": 1.6838,
+        "minZ": -2.175,
+        "maxZ": 2.175,
+        "width": 2.0486,
+        "height": 1.6789,
+        "length": 4.35
+      },
+      "hitbox": {
+        "minX": -0.91,
+        "maxX": 0.91,
+        "minZ": -2.075,
+        "maxZ": 2.075,
+        "width": 1.82,
+        "length": 4.15,
+        "area": 7.1053
+      },
+      "widthDelta": -0.2286,
+      "lengthDelta": -0.2,
+      "decision": "retained",
+      "reason": "The compound footprint is already inside the complete rendered bounds and excludes mirrors, tyres, lamps and plates."
+    },
+    {
+      "kind": "sports",
+      "visual": {
+        "minX": -1.0831,
+        "maxX": 1.0831,
+        "minY": 0.0053,
+        "maxY": 1.3408,
+        "minZ": -2.34,
+        "maxZ": 2.34,
+        "width": 2.1662,
+        "height": 1.3355,
+        "length": 4.68
+      },
+      "hitbox": {
+        "minX": -0.97,
+        "maxX": 0.97,
+        "minZ": -2.24,
+        "maxZ": 2.24,
+        "width": 1.94,
+        "length": 4.48,
+        "area": 7.803
+      },
+      "widthDelta": -0.2262,
+      "lengthDelta": -0.2,
+      "decision": "retained",
+      "reason": "The compound footprint is already inside the complete rendered bounds and excludes mirrors, tyres, lamps and plates."
+    },
+    {
+      "kind": "suv",
+      "visual": {
+        "minX": -1.0929,
+        "maxX": 1.0929,
+        "minY": 0.0058,
+        "maxY": 1.9638,
+        "minZ": -2.51,
+        "maxZ": 2.51,
+        "width": 2.1858,
+        "height": 1.958,
+        "length": 5.02
+      },
+      "hitbox": {
+        "minX": -0.98,
+        "maxX": 0.98,
+        "minZ": -2.41,
+        "maxZ": 2.41,
+        "width": 1.96,
+        "length": 4.82,
+        "area": 9.0294
+      },
+      "widthDelta": -0.2258,
+      "lengthDelta": -0.2,
+      "decision": "retained",
+      "reason": "The compound footprint is already inside the complete rendered bounds and excludes mirrors, tyres, lamps and plates."
+    },
+    {
+      "kind": "taxi",
+      "visual": {
+        "minX": -1.0439,
+        "maxX": 1.0439,
+        "minY": 0.005,
+        "maxY": 1.69,
+        "minZ": -2.43,
+        "maxZ": 2.43,
+        "width": 2.0878,
+        "height": 1.685,
+        "length": 4.86
+      },
+      "hitbox": {
+        "minX": -0.93,
+        "maxX": 0.93,
+        "minZ": -2.33,
+        "maxZ": 2.33,
+        "width": 1.86,
+        "length": 4.66,
+        "area": 8.0394
+      },
+      "widthDelta": -0.2278,
+      "lengthDelta": -0.2,
+      "decision": "retained",
+      "reason": "The compound footprint is already inside the complete rendered bounds and excludes mirrors, tyres, lamps and plates."
+    },
+    {
+      "kind": "van",
+      "visual": {
+        "minX": -1.137,
+        "maxX": 1.137,
+        "minY": 0.0055,
+        "maxY": 2.15,
+        "minZ": -2.7459,
+        "maxZ": 2.7501,
+        "width": 2.274,
+        "height": 2.1445,
+        "length": 5.496
+      },
+      "hitbox": {
+        "minX": -1.025,
+        "maxX": 1.025,
+        "minZ": -2.67,
+        "maxZ": 2.67,
+        "width": 2.05,
+        "length": 5.34,
+        "area": 10.5121
+      },
+      "widthDelta": -0.224,
+      "lengthDelta": -0.156,
+      "decision": "retained",
+      "reason": "The compound footprint is already inside the complete rendered bounds and excludes mirrors, tyres, lamps and plates."
+    },
+    {
+      "kind": "emergency",
+      "visual": {
+        "minX": -1.1517,
+        "maxX": 1.1517,
+        "minY": 0.0056,
+        "maxY": 2.565,
+        "minZ": -2.7867,
+        "maxZ": 2.7913,
+        "width": 2.3034,
+        "height": 2.5594,
+        "length": 5.578
+      },
+      "hitbox": {
+        "minX": -1.04,
+        "maxX": 1.04,
+        "minZ": -2.71,
+        "maxZ": 2.71,
+        "width": 2.08,
+        "length": 5.42,
+        "area": 10.8258
+      },
+      "widthDelta": -0.2234,
+      "lengthDelta": -0.158,
+      "decision": "retained",
+      "reason": "The compound footprint is already inside the complete rendered bounds and excludes mirrors, tyres, lamps and plates."
+    },
+    {
+      "kind": "bus",
+      "visual": {
+        "minX": -1.3673,
+        "maxX": 1.3673,
+        "minY": 0.007,
+        "maxY": 3.13,
+        "minZ": -5.5305,
+        "maxZ": 5.5305,
+        "width": 2.7346,
+        "height": 3.123,
+        "length": 11.061
+      },
+      "hitbox": {
+        "minX": -1.26,
+        "maxX": 1.26,
+        "minZ": -5.4,
+        "maxZ": 5.4,
+        "width": 2.52,
+        "length": 10.8,
+        "area": 27.1192
+      },
+      "widthDelta": -0.2146,
+      "lengthDelta": -0.261,
+      "decision": "retained",
+      "reason": "The compound footprint is already inside the complete rendered bounds and excludes mirrors, tyres, lamps and plates."
+    },
+    {
+      "kind": "lorry",
+      "visual": {
+        "minX": -1.3673,
+        "maxX": 1.3673,
+        "minY": 0.0071,
+        "maxY": 3.125,
+        "minZ": -6.684,
+        "maxZ": 6.2445,
+        "width": 2.7346,
+        "height": 3.1179,
+        "length": 12.9285
+      },
+      "hitbox": {
+        "minX": -1.26,
+        "maxX": 1.26,
+        "minZ": -6.659,
+        "maxZ": 5.9225,
+        "width": 2.52,
+        "length": 12.5815,
+        "area": 28.6525
+      },
+      "widthDelta": -0.2146,
+      "lengthDelta": -0.347,
+      "decision": "retained",
+      "reason": "The compound footprint is already inside the complete rendered bounds and excludes mirrors, tyres, lamps and plates."
+    }
+  ],
+  "trains": [
+    {
+      "kind": "class43-power",
+      "visual": {
+        "minX": -1.448,
+        "maxX": 1.448,
+        "minY": 0,
+        "maxY": 3.92,
+        "minZ": -6.85,
+        "maxZ": 6.76,
+        "width": 2.896,
+        "height": 3.92,
+        "length": 13.61
+      },
+      "oldPaddedRectangle": {
+        "width": 2.94,
+        "length": 14.1,
+        "area": 41.454
+      },
+      "hitbox": {
+        "minX": -1.405,
+        "maxX": 1.405,
+        "minZ": -6.85,
+        "maxZ": 6.76,
+        "width": 2.81,
+        "length": 13.61,
+        "area": 35.9168
+      },
+      "areaReductionPercent": 13.36,
+      "decision": "recalibrated"
+    },
+    {
+      "kind": "mark3-coach",
+      "visual": {
+        "minX": -1.4825,
+        "maxX": 1.4825,
+        "minY": 0,
+        "maxY": 3.63,
+        "minZ": -7.275,
+        "maxZ": 7.275,
+        "width": 2.965,
+        "height": 3.63,
+        "length": 14.55
+      },
+      "oldPaddedRectangle": {
+        "width": 2.94,
+        "length": 15.3,
+        "area": 44.982
+      },
+      "hitbox": {
+        "minX": -1.43,
+        "maxX": 1.43,
+        "minZ": -7.275,
+        "maxZ": 7.275,
+        "width": 2.86,
+        "length": 14.55,
+        "area": 40.326
+      },
+      "areaReductionPercent": 10.35,
+      "decision": "recalibrated"
+    }
+  ],
+  "stationBlockers": [
+    {
+      "object": "front-left-wall",
+      "count": 9,
+      "renderedWidth": 3.75,
+      "renderedLength": 0.3,
+      "hitboxWidth": 3.726,
+      "hitboxLength": 0.276,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "front-right-wall",
+      "count": 9,
+      "renderedWidth": 3.75,
+      "renderedLength": 0.3,
+      "hitboxWidth": 3.726,
+      "hitboxLength": 0.276,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "front-lintel",
+      "count": 9,
+      "renderedWidth": 3.3,
+      "renderedLength": 0.3,
+      "hitboxWidth": 3.276,
+      "hitboxLength": 0.276,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "rear-left-wall",
+      "count": 9,
+      "renderedWidth": 3.75,
+      "renderedLength": 0.3,
+      "hitboxWidth": 3.726,
+      "hitboxLength": 0.276,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "rear-right-wall",
+      "count": 9,
+      "renderedWidth": 3.75,
+      "renderedLength": 0.3,
+      "hitboxWidth": 3.726,
+      "hitboxLength": 0.276,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "rear-lower-panel",
+      "count": 9,
+      "renderedWidth": 3.3,
+      "renderedLength": 0.3,
+      "hitboxWidth": 3.276,
+      "hitboxLength": 0.276,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "rear-lintel",
+      "count": 9,
+      "renderedWidth": 3.3,
+      "renderedLength": 0.3,
+      "hitboxWidth": 3.276,
+      "hitboxLength": 0.276,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "side-left-wall",
+      "count": 9,
+      "renderedWidth": 0.3,
+      "renderedLength": 12.5475,
+      "hitboxWidth": 0.276,
+      "hitboxLength": 12.5235,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "side-right-wall",
+      "count": 9,
+      "renderedWidth": 0.3,
+      "renderedLength": 12.5475,
+      "hitboxWidth": 0.276,
+      "hitboxLength": 12.5235,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "ticket-desk",
+      "count": 9,
+      "renderedWidth": 2.45,
+      "renderedLength": 0.92,
+      "hitboxWidth": 2.426,
+      "hitboxLength": 0.896,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "interior-bench",
+      "count": 9,
+      "renderedWidth": 2.15,
+      "renderedLength": 0.55,
+      "hitboxWidth": 2.126,
+      "hitboxLength": 0.526,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "vending-machine",
+      "count": 9,
+      "renderedWidth": 0.92,
+      "renderedLength": 0.82,
+      "hitboxWidth": 0.896,
+      "hitboxLength": 0.796,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    },
+    {
+      "object": "lift-tower",
+      "count": 9,
+      "renderedWidth": 3.2,
+      "renderedLength": 3.2,
+      "hitboxWidth": 3.176,
+      "hitboxLength": 3.176,
+      "widthInset": 0.024,
+      "lengthInset": 0.024
+    }
+  ],
+  "proceduralBuildings": {
+    "count": 196,
+    "minimumTotalWidthInset": 0.16,
+    "maximumTotalWidthInset": 0.16,
+    "minimumTotalDepthInset": 0.16,
+    "maximumTotalDepthInset": 0.16,
+    "decision": "retained: existing oriented footprints are inset 80 mm per face from visible walls"
+  },
+  "landmarkTower": {
+    "renderedWidth": 46,
+    "renderedLength": 46,
+    "hitboxWidth": 45.84,
+    "hitboxLength": 45.84,
+    "decision": "retained"
+  },
+  "clearances": {
+    "walkingBodyRadiusBefore": 0.3,
+    "walkingBodyRadiusAfter": 0.2,
+    "cameraClearanceBefore": 0.6,
+    "cameraClearanceAfter": 0.38,
+    "vehicleToBuildingNumericalPadding": 0.035,
+    "trainProfileNumericalPadding": 0.035
+  },
+  "conclusions": [
+    "Road-vehicle compound hitboxes were not reduced because each was already smaller than the full rendered object and already excluded decorative protrusions.",
+    "The largest true overstatement was the single padded rectangular footprint used for every HST vehicle.",
+    "Station blockers now sit 12 mm inside rendered box faces rather than extending 35 mm beyond them.",
+    "Building colliders remain oriented and inset; broad-phase AABBs are not used as physical hitboxes."
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "testedAt": "2026-07-21T13:45:07Z",
+  "environment": {
+    "browser": "Chromium headless via Chrome DevTools Protocol",
+    "scope": "Production DiagnosticsManager lifecycle and browser download APIs",
+    "fullGameWebGLAvailable": false,
+    "limitation": "The container Chromium build could not initialise a WebGL context or reliably load the complete local game, so gameplay steps requiring the rendered city were not claimed as completed."
+  },
+  "checks": {
+    "initiallyDisabled": true,
+    "initialIndicatorAbsent": true,
+    "f8StartedSession": true,
+    "recordingIndicatorAppeared": true,
+    "f8StoppedSession": true,
+    "exactlyOneDownload": true,
+    "downloadFilename": "city-sim-diagnostics-2026-07-21T13-45-07-035Z.json",
+    "schemaVersion": 1,
+    "reasonEnded": "manual-toggle",
+    "downloadedJsonParsed": true,
+    "indicatorRemovedAfterStop": true,
+    "recordingDisabledAfterStop": true,
+    "toastIncludedFilenameAndDuration": true,
+    "eventsInDownloadedFile": 4
+  }
+}

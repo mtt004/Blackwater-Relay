@@ -1,0 +1,615 @@
+{
+  "passed": true,
+  "method": "Analytical comparison of the previous full-XZ-projection rejection and the fixed vertical stair-volume intersection for every platform-footbridge stair.",
+  "stations": 9,
+  "stairs": 45,
+  "player": {
+    "bodyHeight": 1.72,
+    "maxStepUp": 0.58
+  },
+  "totals": {
+    "oldProjectedBlockedArea": 1026.4522367714621,
+    "newProjectedBlockedArea": 346.7744043146833,
+    "restoredClearArea": 679.677832456779,
+    "projectedBlockedAreaReductionPercent": 66.2162162162162,
+    "maxOldDebugVertical": 5.02,
+    "maxNewDebugVertical": 0.32,
+    "debugVerticalReductionPercent": 93.62549800796812
+  },
+  "stationResults": [
+    {
+      "stationId": "north-gate",
+      "stationName": "North Gate",
+      "stairs": [
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 12.199401758083486,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.737800074294718,
+          "newProjectedBlockedArea": 8.019527052126596,
+          "restoredClearArea": 15.718273022168121,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.9728394612799,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.296951366092046,
+          "newProjectedBlockedArea": 7.870591677733801,
+          "restoredClearArea": 15.426359688358245,
+          "restoredRunFraction": 0.6621621621621622
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.725888351704626,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.816429764830836,
+          "newProjectedBlockedArea": 7.708253298929337,
+          "restoredClearArea": 15.108176465901499,
+          "restoredRunFraction": 0.6621621621621622
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.499358479510319,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.375644148975457,
+          "newProjectedBlockedArea": 7.559339239518737,
+          "restoredClearArea": 14.81630490945672,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.272842598122333,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 21.934885756665132,
+          "newProjectedBlockedArea": 7.410434377251735,
+          "restoredClearArea": 14.524451379413396,
+          "restoredRunFraction": 0.6621621621621621
+        }
+      ]
+    },
+    {
+      "stationId": "old-town",
+      "stationName": "Old Town",
+      "stairs": [
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.019999999999998,
+          "horizontalLength": 11.900296313265653,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.155795694816515,
+          "newProjectedBlockedArea": 7.82290395095153,
+          "restoredClearArea": 15.332891743864984,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.019999999999998,
+          "horizontalLength": 11.8121287211604,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.984237718783824,
+          "newProjectedBlockedArea": 7.764945175264811,
+          "restoredClearArea": 15.219292543519014,
+          "restoredRunFraction": 0.6621621621621618
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.019999999999998,
+          "horizontalLength": 11.71576242116463,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.79672655974823,
+          "newProjectedBlockedArea": 7.701596810725758,
+          "restoredClearArea": 15.095129749022473,
+          "restoredRunFraction": 0.662162162162162
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.019999999999998,
+          "horizontalLength": 11.62759788753746,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.62517453495337,
+          "newProjectedBlockedArea": 7.64364004559236,
+          "restoredClearArea": 14.98153448936101,
+          "restoredRunFraction": 0.662162162162162
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.019999999999998,
+          "horizontalLength": 11.539435377154778,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.45362644702149,
+          "newProjectedBlockedArea": 7.585684610480238,
+          "restoredClearArea": 14.867941836541254,
+          "restoredRunFraction": 0.662162162162162
+        }
+      ]
+    },
+    {
+      "stationId": "west-suburbs",
+      "stationName": "West Suburbs",
+      "stairs": [
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 12.065394054345031,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.477045642000455,
+          "newProjectedBlockedArea": 7.931434338513668,
+          "restoredClearArea": 15.545611303486787,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.897518359973887,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.150390306817716,
+          "newProjectedBlockedArea": 7.821077806357338,
+          "restoredClearArea": 15.329312500460379,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.714249967059697,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.793783601242854,
+          "newProjectedBlockedArea": 7.700602567987453,
+          "restoredClearArea": 15.093181033255402,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.546388259189252,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.467155481227216,
+          "newProjectedBlockedArea": 7.590255230144331,
+          "restoredClearArea": 14.876900251082885,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.378534061034916,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.140541973742845,
+          "newProjectedBlockedArea": 7.479912828967178,
+          "restoredClearArea": 14.660629144775667,
+          "restoredRunFraction": 0.6621621621621621
+        }
+      ]
+    },
+    {
+      "stationId": "south-parkway",
+      "stationName": "South Parkway",
+      "stairs": [
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.944342410016855,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.241501326901325,
+          "newProjectedBlockedArea": 7.851858556385585,
+          "restoredClearArea": 15.38964277051574,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.830152471855161,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.01930863447833,
+          "newProjectedBlockedArea": 7.7767934575940325,
+          "restoredClearArea": 15.2425151768843,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.705481079543603,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.77672095318365,
+          "newProjectedBlockedArea": 7.6948381598593425,
+          "restoredClearArea": 15.081882793324306,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.591297583217703,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.554540795392537,
+          "newProjectedBlockedArea": 7.6197772957407235,
+          "restoredClearArea": 14.934763499651813,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.477117521972854,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.332367321639612,
+          "newProjectedBlockedArea": 7.544718689743114,
+          "restoredClearArea": 14.787648631896499,
+          "restoredRunFraction": 0.6621621621621621
+        }
+      ]
+    },
+    {
+      "stationId": "industrial",
+      "stationName": "Industrial Exchange",
+      "stairs": [
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 12.06527889520959,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.476821563427745,
+          "newProjectedBlockedArea": 7.931358636293159,
+          "restoredClearArea": 15.545462927134587,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.897432347466031,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.150222942240678,
+          "newProjectedBlockedArea": 7.8210212642705015,
+          "restoredClearArea": 15.329201677970175,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.714303636659077,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.793888032447384,
+          "newProjectedBlockedArea": 7.7006378487997935,
+          "restoredClearArea": 15.09325018364759,
+          "restoredRunFraction": 0.6621621621621622
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.546472593480562,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.46731958030242,
+          "newProjectedBlockedArea": 7.59031066902109,
+          "restoredClearArea": 14.87700891128133,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.378649080383155,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.14076578031527,
+          "newProjectedBlockedArea": 7.479988439295702,
+          "restoredClearArea": 14.660777341019568,
+          "restoredRunFraction": 0.6621621621621621
+        }
+      ]
+    },
+    {
+      "stationId": "commercial",
+      "stationName": "Commercial Central",
+      "stairs": [
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 12.07411017097702,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.494005607590346,
+          "newProjectedBlockedArea": 7.9371640566183626,
+          "restoredClearArea": 15.556841550971983,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.901336749385873,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.157820192828925,
+          "newProjectedBlockedArea": 7.823587902982747,
+          "restoredClearArea": 15.334232289846177,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.712935485959866,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.7912258619235,
+          "newProjectedBlockedArea": 7.699738466866049,
+          "restoredClearArea": 15.091487395057452,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.540179979373452,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.455075306478065,
+          "newProjectedBlockedArea": 7.586174090026375,
+          "restoredClearArea": 14.86890121645169,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.367432488270486,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.118940347694444,
+          "newProjectedBlockedArea": 7.4726149823292065,
+          "restoredClearArea": 14.646325365365238,
+          "restoredRunFraction": 0.6621621621621621
+        }
+      ]
+    },
+    {
+      "stationId": "waterfront",
+      "stationName": "Waterfront",
+      "stairs": [
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 12.161795743060923,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.664625660999818,
+          "newProjectedBlockedArea": 7.9948059665539954,
+          "restoredClearArea": 15.669819694445822,
+          "restoredRunFraction": 0.662162162162162
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.955815531396878,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 23.263825918463088,
+          "newProjectedBlockedArea": 7.859400648129424,
+          "restoredClearArea": 15.404425270333665,
+          "restoredRunFraction": 0.6621621621621622
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.730709823890423,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.82581146608798,
+          "newProjectedBlockedArea": 7.7114227925972925,
+          "restoredClearArea": 15.114388673490687,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.524746311805972,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.425044217872657,
+          "newProjectedBlockedArea": 7.5760284519840075,
+          "restoredClearArea": 14.849015765888648,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.318794087194801,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.02429893301172,
+          "newProjectedBlockedArea": 7.440641531422879,
+          "restoredClearArea": 14.583657401588841,
+          "restoredRunFraction": 0.6621621621621621
+        }
+      ]
+    },
+    {
+      "stationId": "city-central",
+      "stationName": "City Central",
+      "stairs": [
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.685744413833254,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.738317018789488,
+          "newProjectedBlockedArea": 7.681863857699153,
+          "restoredClearArea": 15.056453161090335,
+          "restoredRunFraction": 0.6621621621621622
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.704714738503439,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.77522979396446,
+          "newProjectedBlockedArea": 7.69433438985286,
+          "restoredClearArea": 15.080895404111601,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.725772880673555,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.81620507936639,
+          "newProjectedBlockedArea": 7.708177391677837,
+          "restoredClearArea": 15.108027687688555,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.744742825081193,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.85311711462014,
+          "newProjectedBlockedArea": 7.720647673858157,
+          "restoredClearArea": 15.132469440761984,
+          "restoredRunFraction": 0.6621621621621621
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.763712861671612,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.890029329244683,
+          "newProjectedBlockedArea": 7.733118016636719,
+          "restoredClearArea": 15.156911312607964,
+          "restoredRunFraction": 0.6621621621621621
+        }
+      ]
+    },
+    {
+      "stationId": "eastmere-airport-station",
+      "stationName": "Eastmere Airport",
+      "stairs": [
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.717343877627838,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.79980378419696,
+          "newProjectedBlockedArea": 7.702636413580056,
+          "restoredClearArea": 15.097167370616905,
+          "restoredRunFraction": 0.6621621621621622
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.717343877627838,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.79980378419696,
+          "newProjectedBlockedArea": 7.702636413580056,
+          "restoredClearArea": 15.097167370616905,
+          "restoredRunFraction": 0.6621621621621622
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.717343877627826,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.799803784196936,
+          "newProjectedBlockedArea": 7.702636413580048,
+          "restoredClearArea": 15.097167370616887,
+          "restoredRunFraction": 0.6621621621621622
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.717343877627826,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.799803784196936,
+          "newProjectedBlockedArea": 7.702636413580048,
+          "restoredClearArea": 15.097167370616887,
+          "restoredRunFraction": 0.6621621621621622
+        },
+        {
+          "role": "platform-footbridge-stairs",
+          "rise": 5.02,
+          "horizontalLength": 11.717343877627826,
+          "width": 2.2,
+          "structureDepth": 0.32,
+          "headClearance": 0.04,
+          "oldProjectedBlockedArea": 22.799803784196936,
+          "newProjectedBlockedArea": 7.702636413580048,
+          "restoredClearArea": 15.097167370616887,
+          "restoredRunFraction": 0.6621621621621622
+        }
+      ]
+    }
+  ]
+}

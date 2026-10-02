@@ -1,0 +1,11 @@
+{
+  "measuredAt": "2026-07-21T15:56:42.910Z",
+  "passed": true,
+  "totalBoundaries": 314,
+  "buildings": 196,
+  "structures": 118,
+  "drawBatches": 2,
+  "visualCollisionSeparation": 196,
+  "exportedJsonBytes": 369122,
+  "filename": "city-sim-diagnostics-2026-07-21T15-00-00-250Z.json"
+}

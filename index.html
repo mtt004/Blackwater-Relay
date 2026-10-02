@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <title>Urban Systems — 3D City Simulation</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#0b1117" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three.module.js?v=20261002-flight-sim-terrain"
+    }
+  }
+  </script>
+</head>
+<body>
+  <canvas id="scene"></canvas>
+
+  <section id="loading">
+    <div class="loading-card">
+      <div class="loading-mark">US</div>
+      <h1>Urban Systems</h1>
+      <p id="loading-status">Preparing the simulation…</p>
+      <div class="loading-bar"><span id="loading-progress"></span></div>
+      <p id="loading-detail" class="loading-detail">Starting renderer</p>
+      <button id="loading-retry" class="loading-retry" type="button" hidden>Reload simulation</button>
+    </div>
+  </section>
+
+  <header class="topbar">
+    <div>
+      <strong>URBAN SYSTEMS</strong>
+      <span id="district">Central Business District</span>
+    </div>
+    <div class="topbar-status">
+      <span id="clock">08:00</span>
+      <span id="weather">CLEAR</span>
+      <span id="fps">60 FPS</span>
+    </div>
+  </header>
+
+  <aside class="left-panel glass">
+    <h2>Vehicle</h2>
+    <div class="speed-row">
+      <span id="speed">0</span><small id="speed-unit">km/h</small>
+    </div>
+    <div class="vehicle-grid">
+      <label>Gear <b id="gear">P</b></label>
+      <label>Road <b id="road">—</b></label>
+      <label>Limit <b id="limit">—</b></label>
+      <label>Grip <b id="grip">100%</b></label>
+    </div>
+    <div class="meter"><span id="throttle-meter"></span></div>
+    <p id="mode">DRIVING · CHASE CAMERA</p>
+  </aside>
+
+  <aside class="right-panel glass">
+    <div class="panel-tabs">
+      <button class="active" data-panel="diagnostics">Diagnostics</button>
+      <button data-panel="incidents">Incidents</button>
+      <button data-panel="controls">Controls</button>
+      <button data-panel="settings">Settings</button>
+    </div>
+    <div id="diagnostics" class="panel-content active">
+      <section class="diagnostic-settings" aria-label="Diagnostic visual settings">
+        <label class="diagnostic-toggle" for="diagnostics-object-boundaries">
+          <input id="diagnostics-object-boundaries" type="checkbox" />
+          <span><b>Building &amp; structure boundaries</b><small>Show visual object bounds and include their static catalogue in the next active diagnostics session.</small></span>
+        </label>
+        <p id="diagnostics-object-boundary-status" class="diagnostic-setting-status">Hidden · loading boundary catalogue</p>
+      </section>
+      <div class="stat"><span>Detailed vehicles</span><b id="active-vehicles">0</b></div>
+      <div class="stat"><span>Distant demand</span><b id="distant-vehicles">0</b></div>
+      <div class="stat"><span>Pedestrians</span><b id="ped-count">0</b></div>
+      <div class="stat"><span>Average speed</span><b id="avg-speed">0 km/h</b></div>
+      <div class="stat"><span>Congestion</span><b id="congestion">LOW</b></div>
+      <div class="stat"><span>Bus punctuality</span><b id="punctuality">100%</b></div>
+      <div class="stat"><span>Buses at stops</span><b id="buses-at-stops">0</b></div>
+      <div class="stat"><span>Active trains</span><b id="active-trains">0</b></div>
+      <div class="stat"><span>Rail crossings</span><b id="rail-crossings">—</b></div>
+      <div class="stat"><span>Train speed</span><b id="train-speed">0 km/h avg</b></div>
+      <div class="stat"><span>Rail blocks</span><b id="rail-blocks">0 occupied · 0 reserved</b></div>
+      <div class="stat"><span>Trains at signals</span><b id="rail-waiting">0</b></div>
+      <div class="stat"><span>Junction routes</span><b id="rail-junction-routes">0</b></div>
+      <div class="stat"><span>Platform occupancy</span><b id="rail-platforms">0 occupied · 0 reserved</b></div>
+      <div class="stat"><span>Rail delay</span><b id="rail-delay">0s avg · —</b></div>
+      <div class="stat"><span>Dispatcher time</span><b id="rail-dispatcher-time">0.00 ms</b></div>
+      <div class="stat"><span>Deadlock recoveries</span><b id="rail-deadlocks">0</b></div>
+      <div class="stat"><span>Wanted level</span><b id="wanted-level">CLEAR</b></div>
+      <div class="stat"><span>Police consequences</span><b id="police-consequences">£0 · 0 points</b></div>
+      <div class="stat"><span>Airport</span><b id="airport-status">0 aircraft</b></div>
+      <div class="stat"><span>Gate-to-gate cycles</span><b id="airport-cycles">0</b></div>
+      <div class="stat"><span>Lane changes</span><b id="lane-changes">0 active · 0 complete</b></div>
+      <div class="stat"><span>Collision contacts</span><b id="collision-contacts">0</b></div>
+      <div class="stat"><span>Road-wheel angle</span><b id="steering-angle">0°</b></div>
+      <div class="stat"><span>Routing time</span><b id="routing-time">0.0 ms</b></div>
+      <div class="stat"><span>Junction control</span><b id="junction-controls">—</b></div>
+      <div class="stat"><span>Simulation step</span><b id="sim-time">0.0 ms</b></div>
+      <div class="stat"><span>Active chunk</span><b id="active-chunk">—</b></div>
+      <div class="stat"><span>Primary ahead chunk</span><b id="preload-chunk">—</b></div>
+      <div class="stat"><span>Neighbourhood</span><b id="chunk-neighbours">0 local · 0 ahead</b></div>
+      <div class="stat"><span>Detailed / prepared</span><b id="chunk-count">0 / 0</b></div>
+    </div>
+    <div id="incidents" class="panel-content">
+      <div id="incident-list" class="incident-list">
+        <p class="muted">No active incidents.</p>
+      </div>
+    </div>
+    <div id="controls" class="panel-content controls">
+      <p><kbd>W</kbd> car accelerator / HST power / aircraft nose down</p>
+      <p><kbd>S</kbd> car brake / HST service brake / aircraft nose up</p>
+      <p><kbd>A/D</kbd> car steering / aircraft bank + coordinated turn (A left, D right)</p>
+      <p><kbd>Tab / Shift</kbd> aircraft throttle up / down</p>
+      <p><kbd>Space</kbd> car handbrake / HST emergency brake / aircraft wheel brake</p>
+      <p><kbd>R</kbd> reverse HST direction while stopped</p>
+      <p><kbd>J</kbd> request a protected route between City and Airport loops at Industrial Exchange</p>
+      <p><kbd>V</kbd> toggle railway operations debug mode</p>
+      <p><kbd>B</kbd> show exact collision hitboxes</p>
+      <p><kbd>Diagnostics tab</kbd> show and record building / structure object boundaries</p>
+      <p><kbd>F8</kbd> start / stop diagnostics recording and download JSON</p>
+      <p><kbd>C</kbd> change car, train or bus camera</p>
+      <p><kbd>E</kbd> enter / exit vehicles, sit in aircraft seats, or take the pilot seat in the cockpit</p>
+      <p><kbd>↑/↓</kbd> aircraft elevator (↓ pulls up) · <kbd>←/→</kbd> aircraft rudder (← yaws left, → yaws right)</p>
+      <p><kbd>Mouse</kbd> free-look while walking, riding, or flying · <kbd>C</kbd> cycles aircraft cockpit/chase/wing cameras</p>
+      <p><kbd>H</kbd> horn / request next bus stop</p>
+      <p><kbd>L</kbd> headlights</p>
+      <p><kbd>T</kbd> cycle weather</p>
+      <p><kbd>N</kbd> advance time</p>
+      <p><kbd>I</kbd> create incident</p>
+      <p><kbd>G</kbd> toggle chunk graph</p>
+      <p class="muted">Steering builds progressively while a key is held, recentres smoothly when released, and reduces maximum lock as speed rises.</p>
+    </div>
+    <div id="settings" class="panel-content settings-panel">
+      <section class="graphics-quality" aria-labelledby="graphics-quality-title">
+        <div class="settings-heading">
+          <h2 id="graphics-quality-title">Graphics quality</h2>
+          <span class="recommended-badge">Medium default</span>
+        </div>
+        <p class="muted settings-copy">Changes apply immediately and are saved for the next session. Gameplay population and transport operations are unchanged.</p>
+        <div class="quality-segment" role="group" aria-label="Graphics quality preset">
+          <button type="button" data-quality="low" aria-pressed="false">Low</button>
+          <button type="button" data-quality="medium" class="active" aria-pressed="true">Medium</button>
+          <button type="button" data-quality="high" aria-pressed="false">High</button>
+          <button type="button" data-quality="ultra" aria-pressed="false">Ultra</button>
+        </div>
+        <p id="graphics-quality-status" class="quality-status" aria-live="polite">Medium · Balanced / recommended</p>
+        <div class="quality-notes">
+          <p><b>Low</b><span>Maximum performance</span></p>
+          <p><b>Medium</b><span>Balanced / recommended</span></p>
+          <p><b>High</b><span>Increased detail</span></p>
+          <p><b>Ultra</b><span>Maximum visual detail</span></p>
+        </div>
+      </section>
+    </div>
+  </aside>
+
+  <aside class="map-panel glass">
+    <canvas id="minimap" width="260" height="260"></canvas>
+    <div class="map-legend"><span>PLAYER</span><span>TRAFFIC</span><span>TRAIN</span><span>INCIDENT</span></div>
+  </aside>
+
+  <div id="interaction-prompt" hidden><kbd>E</kbd><span>Interact</span></div>
+  <div id="toast"></div>
+  <div id="crosshair">•</div>
+  <script type="module" src="./src/main.js?v=20261002-flight-sim-terrain"></script>
+</body>
+</html>

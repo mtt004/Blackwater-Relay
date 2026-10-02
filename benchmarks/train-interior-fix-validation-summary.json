@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "lint": {"passed": true, "javascriptFiles": 55},
+  "regressionTests": {"passed": 107, "failed": 0, "execution": "isolated deterministic ranges"},
+  "diagnosticsTests": {"passed": 17, "failed": 0},
+  "windowValidation": {"rays": 80, "opaqueHits": 0},
+  "openDoorValidation": {"rays": 20, "blocked": 0},
+  "passengerLook": {"pointerLockRequested": true, "yawChangeRadians": -0.28, "pitchChangeRadians": 0.081, "repeatedDeltaRadians": 0},
+  "integrationSmoke": true,
+  "railwayUpgradeValidation": true,
+  "railwayOperationsValidation": true,
+  "fourTrackValidation": true,
+  "stationRoadAndFleetValidation": true,
+  "stationStairValidation": true,
+  "stationWalkCollisionValidation": true,
+  "webglScreenshot": {"completed": false, "reason": "Container Chromium could not initialise EGL/ANGLE or software WebGL"}
+}
