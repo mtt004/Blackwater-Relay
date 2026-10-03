@@ -237,6 +237,8 @@ function frame(){
     }
   }
   if(input.consume("KeyT")){const from=weather.mode,to=weather.cycle();toast(`Weather: ${to}`);if(diagnostics.isEnabled())diagnostics.logEvent("weather","weather-changed",{from,to,source:"keyboard"});}
+  if(input.consume("KeyU"))airport?.toggleGroundServiceForPlayer?.("stairs");
+  if(input.consume("KeyY"))airport?.toggleGroundServiceForPlayer?.("jetway");
   if(input.consume("KeyN")){const from=weather.timeOfDay;weather.advanceTime();toast(`Time advanced to ${weather.clockText()}`);if(diagnostics.isEnabled())diagnostics.logEvent("environment","time-of-day-advanced",{from,to:weather.timeOfDay,clock:weather.clockText(),source:"keyboard"});}
   if(input.consume("KeyI")){const before=incidents.incidents.length;incidents.create();if(diagnostics.isEnabled())diagnostics.logEvent("incident","incident-create-requested",{created:incidents.incidents.length>before,activeIncidents:incidents.incidents.length});}
   if(input.consume("KeyG"))toast(`Chunk graph ${chunkManager.toggleDebug()?"shown":"hidden"}`);

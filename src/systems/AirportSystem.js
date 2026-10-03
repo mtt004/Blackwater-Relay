@@ -17,8 +17,17 @@ const AIRCRAFT_CAMERA_MODES=Object.freeze(["PILOT","COPILOT","CHASE","LEFT WING"
 const MANUAL_FLIGHT=Object.freeze({
   gravity:9.81,stallAoADeg:14.5,deepStallAoADeg:21,referenceLiftSpeed:58,maxBankDeg:45,
   maxRollRateDeg:42,maxRudderYawDeg:7.5,maxElevatorAoADeg:13.0,trimAoADeg:3.0,
-  maxFlightSpeed:102,takeoffSpeed:40,groundMaxSpeed:45,engineSpoolUp:0.42,engineSpoolDown:0.62
+  // The world is compressed, but the scalar speed is still treated as m/s for the HUD.
+  // Keep the existing short-runway take-off threshold while allowing a landing aircraft
+  // to retain its touchdown momentum instead of being hard-clamped to taxi speed.
+  takeoffSpeed:40,groundPoweredSpeedLimit:45,engineSpoolUp:0.42,engineSpoolDown:0.62,
+  lowSpeedThrustAccel:4.8,cruiseThrustAccel:10.2,highSpeedThrustBlendStart:60,
+  wheelBrakeMaxAccel:4.15,brakeApplyRate:1.75,brakeReleaseRate:3.2,
+  reverseMaxAccel:2.65,reverseIdleAccel:.38,reverseSpoolUp:.95,reverseSpoolDown:1.8,
+  reverseFadeStart:36,reverseFadeEnd:12
 });
+const GROUND_SERVICE=Object.freeze({requestDelay:.12,approachSeconds:1.35,retractSeconds:.9,stopSpeed:.8,standRadius:9,departureReleaseRadius:7.5});
+const ACTIVE_GROUND_SERVICE_STATES=new Set(["REQUESTED","APPROACHING","CONNECTED","RETRACTING"]);
 const geometryCache=new Map(),primitiveGeometryCache=new Map();
 
 function cachedPrimitive(type,args){const key=`${type}:${args.join(":")}`;let geometry=primitiveGeometryCache.get(key);if(geometry)return geometry;if(type==="cylinder")geometry=new THREE.CylinderGeometry(...args);else if(type==="torus")geometry=new THREE.TorusGeometry(...args);else if(type==="sphere")geometry=new THREE.SphereGeometry(...args);else if(type==="plane")geometry=new THREE.PlaneGeometry(...args);else if(type==="circle")geometry=new THREE.CircleGeometry(...args);else if(type==="cone")geometry=new THREE.ConeGeometry(...args);else throw new Error(`Unknown primitive geometry ${type}`);primitiveGeometryCache.set(key,geometry);return geometry;}
@@ -226,7 +235,7 @@ function createAircraft(index=0){
   // Wings are kept lightweight but gain thickness cues, articulated flaps/slats,
   // spoiler panels and winglets so the silhouette reads as a working airliner.
   const wing=new THREE.Mesh(createWingGeometry(),white);wing.position.set(0,1.50,-.10);wing.castShadow=true;wing.material.side=THREE.DoubleSide;wing.name="aircraft-main-wing";group.add(wing);
-  const flapMeshes=[],slatMeshes=[];
+  const flapMeshes=[],slatMeshes=[],reverserSleeves=[];
   for(const side of[-1,1]){
     const rootFairing=box(2.85,.26,1.16,white);rootFairing.position.set(side*1.62,1.40,-.28);rootFairing.rotation.y=side*.04;rootFairing.name="aircraft-wing-root-fairing";group.add(rootFairing);
     const flap=box(3.75,.07,.25,material(0xb8c0c2,.58,.16),{cast:false});flap.position.set(side*4.05,1.45,-1.67);flap.rotation.y=side*.11;flap.userData.baseRotationX=0;flap.name="aircraft-wing-flap";group.add(flap);flapMeshes.push(flap);
@@ -268,6 +277,9 @@ function createAircraft(index=0){
     const exhaust=new THREE.Mesh(cachedPrimitive("cylinder",[.34,.46,.42,24]),dark);exhaust.rotation.x=Math.PI/2;exhaust.position.set(x,.88,-1.20);exhaust.name="aircraft-engine-exhaust";group.add(exhaust);
     const exhaustCone=new THREE.Mesh(cachedPrimitive("cone",[.16,.34,14]),silver);exhaustCone.position.set(x,.88,-1.50);exhaustCone.rotation.x=-Math.PI/2;exhaustCone.name="aircraft-engine-exhaust-cone";group.add(exhaustCone);
     const nacelleBand=new THREE.Mesh(cachedPrimitive("torus",[.63,.018,6,28]),accentGold);nacelleBand.position.set(x,.88,.67);nacelleBand.rotation.x=Math.PI/2;nacelleBand.name="aircraft-engine-accent-band";group.add(nacelleBand);
+    // A lightweight translating-cowl cue makes reverse-thrust deployment visible
+    // without changing the independently-created aircraft silhouette or LOD system.
+    const reverserSleeve=new THREE.Mesh(cachedPrimitive("cylinder",[.635,.655,.54,28]),silver);reverserSleeve.rotation.x=Math.PI/2;reverserSleeve.position.set(x,.88,-.58);reverserSleeve.userData.baseZ=reverserSleeve.position.z;reverserSleeve.name="aircraft-engine-reverser-sleeve";group.add(reverserSleeve);reverserSleeves.push(reverserSleeve);
   }
 
   // True transparent passenger windows. The opaque fuselage geometry has matching
@@ -431,7 +443,7 @@ function createAircraft(index=0){
   const noseLight=new THREE.PointLight(0xfff3d1,0,38);noseLight.position.set(0,1.32,6.10);group.add(noseLight);
   group.remove(beacon,noseLight);root.add(beacon,noseLight);const mediumDetail=createAircraftProxy(index,"medium"),lowDetail=createAircraftProxy(index,"low"),farDetail=createAircraftProxy(index,"far");mediumDetail.visible=false;lowDetail.visible=false;farDetail.visible=false;root.add(mediumDetail,lowDetail,farDetail);
   const fullShadowCasters=[],proxyShadowCasters=[];group.traverse(object=>{if(object.isMesh&&object.castShadow)fullShadowCasters.push(object);});for(const proxy of[mediumDetail,lowDetail,farDetail])proxy.traverse(object=>{if(object.isMesh)proxyShadowCasters.push(object);});
-  root.userData={door,doorClosedX:AIRCRAFT_DOOR_LOCAL_X+.055,doorClosedZ:AIRCRAFT_DOOR_LOCAL_Z,beacon,noseLight,gearGroup,gearDeployment:1,flapMeshes,slatMeshes,flapDeployment:0,length:AIRCRAFT_MODEL.length,width:AIRCRAFT_MODEL.span,height:AIRCRAFT_MODEL.height,cabinFloorY:1.15,cabinCeilingY:3.28,cabinHalfWidth:1.18,cabinMinZ:-4.55,cabinMaxZ:5.92,cockpitMinZ:4.82,cockpitMaxZ:6.20,pilotEyeY:2.47,pilotEyeZ:5.42,doorLocalX:AIRCRAFT_DOOR_LOCAL_X,doorLocalZ:AIRCRAFT_DOOR_LOCAL_Z,doorSillY:1.15,doorOpeningHeight:1.90,fuselageTopY:3.40,seats,standingEyeY:2.87,seatedEyeY:2.23,exteriorWindows,seatLayout:"2+2",lodGroups:{full:group,medium:mediumDetail,low:lowDetail,far:farDetail},fullShadowCasters,proxyShadowCasters,lodTier:"full",shadowMode:"full"};return root;
+  root.userData={door,doorClosedX:AIRCRAFT_DOOR_LOCAL_X+.055,doorClosedZ:AIRCRAFT_DOOR_LOCAL_Z,beacon,noseLight,gearGroup,gearDeployment:1,flapMeshes,slatMeshes,flapDeployment:0,reverserSleeves,reverserDeployment:0,length:AIRCRAFT_MODEL.length,width:AIRCRAFT_MODEL.span,height:AIRCRAFT_MODEL.height,cabinFloorY:1.15,cabinCeilingY:3.28,cabinHalfWidth:1.18,cabinMinZ:-4.55,cabinMaxZ:5.92,cockpitMinZ:4.82,cockpitMaxZ:6.20,pilotEyeY:2.47,pilotEyeZ:5.42,doorLocalX:AIRCRAFT_DOOR_LOCAL_X,doorLocalZ:AIRCRAFT_DOOR_LOCAL_Z,doorSillY:1.15,doorOpeningHeight:1.90,fuselageTopY:3.40,seats,standingEyeY:2.87,seatedEyeY:2.23,exteriorWindows,seatLayout:"2+2",lodGroups:{full:group,medium:mediumDetail,low:lowDetail,far:farDetail},fullShadowCasters,proxyShadowCasters,lodTier:"full",shadowMode:"full"};return root;
 }
 
 export class AirportSystem{
@@ -690,7 +702,8 @@ export class AirportSystem{
       // appears between bridge and fuselage.
       const dockFrom={x:bridgeEndX,y:cabinFloorY,z:aircraftDoorZ},dockTo={x:dockContactX,y:cabinFloorY,z:aircraftDoorZ};
       const aircraftDoorPoint={x:aircraftDoorX,y:cabinFloorY,z:aircraftDoorZ},cabinEntryPoint={x:gateX,y:cabinFloorY,z:aircraftDoorZ};
-      const gateWalkway={gateIndex:i,standNo,halfWidth:1.12,points:points.map(point=>({x:point[0],y:point[1],z:point[2]})),dockFrom,dockTo,aircraftDoorPoint,cabinEntryPoint};this.gateWalkways.push(gateWalkway);
+      const dockFromWorld=localPoint(d,dockFrom.x,dockFrom.y,dockFrom.z),dockToWorld=localPoint(d,dockTo.x,dockTo.y,dockTo.z);
+      const gateWalkway={gateIndex:i,standNo,halfWidth:1.12,points:points.map(point=>({x:point[0],y:point[1],z:point[2]})),dockFrom,dockTo,aircraftDoorPoint,cabinEntryPoint,dockTravelWorld:dockToWorld.clone().sub(dockFromWorld)};this.gateWalkways.push(gateWalkway);
       for(let segment=0;segment<points.length-1;segment++){
         const a=points[segment],b=points[segment+1];addBridgeSegment(standNo,a,b);
         this.registerWalkSurface({type:"ramp",role:`gate-${standNo}-boarding-bridge`,gateIndex:i,from:{x:a[0],y:a[1],z:a[2]},to:{x:b[0],y:b[1],z:b[2]},halfWidth:gateWalkway.halfWidth,priority:5});
@@ -861,7 +874,8 @@ export class AirportSystem{
     const top=worldFromAircraft(AIRCRAFT_DOOR_LOCAL_X+.28,.18+(1.15),AIRCRAFT_DOOR_LOCAL_Z),bottom=worldFromAircraft(AIRCRAFT_DOOR_LOCAL_X+5.9,.18,AIRCRAFT_DOOR_LOCAL_Z),stairsGroup=new THREE.Group();stairsGroup.name=`merehaven-stand-${standIndex+1}-stairs`;group.add(stairsGroup);
     const frame=material(0x737b7d,.62,.24),tread=material(0x9a9a91,.88,.06);const ramp=stripBetween(top,bottom,1.35,.14,tread);ramp.name="merehaven-passenger-stair-ramp";stairsGroup.add(ramp);for(let i=0;i<7;i++){const t=i/6,p=top.clone().lerp(bottom,t),step=box(1.45,.10,.72,tread);step.position.copy(p);step.rotation.y=yaw;step.name="merehaven-passenger-stair-step";stairsGroup.add(step);}for(const side of[-1,1]){const a=top.clone().add(new THREE.Vector3(Math.cos(yaw)*0+Math.sin(yaw)*0,0,0)),rail=stripBetween(top.clone().add(new THREE.Vector3(0,.78,0)),bottom.clone().add(new THREE.Vector3(0,.78,0)),.08,.12,frame);const normal=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw)).multiplyScalar(side*.72);rail.position.add(normal);rail.name="merehaven-stair-handrail";stairsGroup.add(rail);}
     const topLocal=this.worldToAirportLocalFor(d,top),bottomLocal=this.worldToAirportLocalFor(d,bottom);this.registerWalkSurface({airportDef:d,type:"ramp",role:`merehaven-stand-${standIndex+1}-stairs`,standIndex,requiresIslandAircraft:true,from:{x:topLocal.x,y:top.y,z:topLocal.z},to:{x:bottomLocal.x,y:bottom.y,z:bottomLocal.z},halfWidth:.69,priority:9});
-    this.islandStairs.push({standIndex,group:stairsGroup});stairsGroup.visible=false;
+    const approachOffset=bottom.clone().sub(top);approachOffset.y=0;if(approachOffset.lengthSq()>1e-6)approachOffset.normalize().multiplyScalar(4.5);
+    this.islandStairs.push({standIndex,group:stairsGroup,approachOffset});stairsGroup.visible=false;
   }
 
   updateIslandVisibility(){
@@ -914,8 +928,10 @@ export class AirportSystem{
     return{x:dx*c-dz*s,z:dx*s+dz*c};
   }
 
+  aircraftHasConnectedGroundService(aircraft){return Boolean(aircraft?.manualControl&&["stairs","jetway"].some(type=>this.groundServiceState(aircraft,type).state==="CONNECTED"));}
+
   aircraftWalkSample(aircraft,position,currentFeetY=0){
-    if(!SERVICE_STATES.has(aircraft.state))return null;
+    if(!SERVICE_STATES.has(aircraft.state)&&!this.aircraftHasConnectedGroundService(aircraft))return null;
     const local=this.aircraftLocalPosition(aircraft,position),floor=aircraft.mesh.position.y+(aircraft.mesh.userData.cabinFloorY??1.15),zMin=aircraft.mesh.userData.cabinMinZ??-4.55,zMax=aircraft.mesh.userData.cabinMaxZ??4.55;
     const inEnvelope=Math.abs(local.x)<=1.46&&local.z>=zMin-.35&&local.z<=zMax+.38;if(!inEnvelope)return null;
     const cockpit=local.z>=4.72&&local.z<=5.98&&Math.abs(local.x)<=.78,aisle=local.z>=zMin&&local.z<=Math.min(zMax,4.82)&&Math.abs(local.x)<=.34,vestibule=local.z>=3.35&&local.z<=4.90&&local.x>=-.44&&local.x<=1.40;
@@ -924,10 +940,57 @@ export class AirportSystem{
     return null;
   }
 
+  groundServiceState(aircraft,type){
+    if(!aircraft.groundServices)aircraft.groundServices={stairs:{state:null,progress:0,timer:0},jetway:{state:null,progress:0,timer:0}};
+    if(!aircraft.groundServices[type])aircraft.groundServices[type]={state:null,progress:0,timer:0};return aircraft.groundServices[type];
+  }
   parkedAircraftAtGate(gateIndex){return this.aircraft.find(aircraft=>aircraft.currentAirportId===this.definition.id&&aircraft.standIndex===gateIndex&&SERVICE_STATES.has(aircraft.state))??null;}
-  openAircraftAtGate(gateIndex){const aircraft=this.parkedAircraftAtGate(gateIndex);return aircraft?.doorsOpen?aircraft:null;}
-  aircraftAtIslandStand(standIndex){return this.aircraft.find(aircraft=>aircraft.currentAirportId===this.islandDefinition?.id&&aircraft.standIndex===standIndex&&SERVICE_STATES.has(aircraft.state))??null;}
-  updateGateDockVisibility(){for(const gate of this.gateWalkways)if(gate.dockGroup)gate.dockGroup.visible=Boolean(this.openAircraftAtGate(gate.gateIndex));for(const stairs of this.islandStairs)stairs.group.visible=Boolean(this.aircraftAtIslandStand(stairs.standIndex));}
+  manualGroundServiceAt(airportId,standIndex,type,{connectedOnly=false}={}){return this.aircraft.find(aircraft=>{if(!aircraft.manualControl||aircraft.currentAirportId!==airportId||aircraft.standIndex!==standIndex)return false;const service=this.groundServiceState(aircraft,type);return connectedOnly?service.state==="CONNECTED":ACTIVE_GROUND_SERVICE_STATES.has(service.state);})??null;}
+  openAircraftAtGate(gateIndex){const aircraft=this.parkedAircraftAtGate(gateIndex);if(aircraft?.doorsOpen)return aircraft;return this.manualGroundServiceAt(this.definition.id,gateIndex,"jetway",{connectedOnly:true});}
+  aircraftAtIslandStand(standIndex){const automatic=this.aircraft.find(aircraft=>aircraft.currentAirportId===this.islandDefinition?.id&&aircraft.standIndex===standIndex&&SERVICE_STATES.has(aircraft.state))??null;if(automatic)return automatic;return this.manualGroundServiceAt(this.islandDefinition?.id,standIndex,"stairs",{connectedOnly:true});}
+  serviceAirportForType(type){return type==="jetway"?this.definition:type==="stairs"?this.islandDefinition:null;}
+  findNearestServiceStand(aircraft,type){
+    const airportDef=this.serviceAirportForType(type);if(!airportDef)return null;let best=null;const count=airportDef.standCount??4;
+    for(let standIndex=0;standIndex<count;standIndex++){const position=this.parkedPositionFor(airportDef,standIndex),distance=Math.hypot(aircraft.simPosition.x-position.x,aircraft.simPosition.z-position.z);if(!best||distance<best.distance)best={airportDef,standIndex,position,distance,owner:(this.standOccupancy.get(airportDef.id)??[])[standIndex]??null};}
+    return best;
+  }
+  groundServiceEligibility(aircraft,type){
+    if(!aircraft?.manualControl)return{available:false,reason:"Manual control required"};
+    if(aircraft.manualAirborne||aircraft.simPosition.y>.55)return{available:false,reason:"Aircraft must be on the ground"};
+    if((aircraft.speed??0)>GROUND_SERVICE.stopSpeed)return{available:false,reason:"Aircraft must be stopped"};
+    const candidate=this.findNearestServiceStand(aircraft,type);if(!candidate)return{available:false,reason:type==="jetway"?"No jetway available":"No passenger stairs available"};
+    if(candidate.distance>GROUND_SERVICE.standRadius)return{available:false,reason:type==="jetway"?"Move closer to a compatible gate":"Move closer to an apron stand",candidate};
+    if(candidate.owner&&candidate.owner!==aircraft.id)return{available:false,reason:type==="jetway"?"Jetway stand is occupied":"Passenger-stairs stand is occupied",candidate};
+    return{available:true,reason:"Available",candidate};
+  }
+  groundServiceDisplayState(aircraft,type){const service=this.groundServiceState(aircraft,type);if(ACTIVE_GROUND_SERVICE_STATES.has(service.state))return{state:service.state,reason:service.state,progress:service.progress};const eligibility=this.groundServiceEligibility(aircraft,type);return{state:eligibility.available?"AVAILABLE":"UNAVAILABLE",reason:eligibility.reason,progress:0};}
+  toggleGroundServiceForPlayer(type){
+    if(type!=="stairs"&&type!=="jetway")return false;const aircraft=this.passengerState?.aircraft;if(!aircraft||!this.passengerState?.pilot||!aircraft.manualControl){this.toast?.("Take the pilot seat before using ground services");return false;}
+    const service=this.groundServiceState(aircraft,type);if(ACTIVE_GROUND_SERVICE_STATES.has(service.state)){if(service.state!=="RETRACTING"){service.state="RETRACTING";service.timer=0;this.toast?.(`${type==="jetway"?"Airbridge":"Passenger stairs"} retracting`);}return true;}
+    const eligibility=this.groundServiceEligibility(aircraft,type);if(!eligibility.available){this.toast?.(eligibility.reason);return true;}const {airportDef,standIndex,position}=eligibility.candidate;
+    if(aircraft.currentAirportId!==airportDef.id||aircraft.standIndex!==standIndex){this.releaseStand(aircraft);if(!this.occupyStand(aircraft,airportDef.id,standIndex)){this.toast?.("Stand became occupied");return true;}aircraft.currentAirportId=airportDef.id;aircraft.standIndex=standIndex;aircraft.gateIndex=standIndex;aircraft.parkedPosition=position.clone();}
+    service.state="REQUESTED";service.progress=0;service.timer=0;this.toast?.(`${type==="jetway"?"Airbridge":"Passenger stairs"} requested`);return true;
+  }
+  groundServicesBlockMovement(aircraft){return["stairs","jetway"].some(type=>ACTIVE_GROUND_SERVICE_STATES.has(this.groundServiceState(aircraft,type).state));}
+  requestGroundServiceRetraction(aircraft){for(const type of["stairs","jetway"]){const service=this.groundServiceState(aircraft,type);if(ACTIVE_GROUND_SERVICE_STATES.has(service.state)&&service.state!=="RETRACTING"){service.state="RETRACTING";service.timer=0;}}}
+  updateGroundServices(aircraft,dt){
+    let connected=false;for(const type of["stairs","jetway"]){const service=this.groundServiceState(aircraft,type);if(!ACTIVE_GROUND_SERVICE_STATES.has(service.state))continue;service.timer+=dt;
+      if(service.state==="REQUESTED"&&service.timer>=GROUND_SERVICE.requestDelay){service.state="APPROACHING";service.timer=0;}
+      if(service.state==="APPROACHING"){service.progress=Math.min(1,service.progress+dt/GROUND_SERVICE.approachSeconds);if(service.progress>=1){service.state="CONNECTED";service.timer=0;}}
+      else if(service.state==="CONNECTED"){service.progress=1;connected=true;}
+      else if(service.state==="RETRACTING"){service.progress=Math.max(0,service.progress-dt/GROUND_SERVICE.retractSeconds);if(service.progress<=0){service.state=null;service.timer=0;}}
+      if(service.state==="CONNECTED")connected=true;
+    }
+    aircraft.doorsOpen=connected;
+  }
+  releaseManualStandIfDeparted(aircraft){
+    if(!aircraft.manualControl||!aircraft.currentAirportId||aircraft.standIndex==null)return;const parked=aircraft.parkedPosition??this.parkedPositionFor(this.airportById.get(aircraft.currentAirportId),aircraft.standIndex),distance=parked?Math.hypot(aircraft.simPosition.x-parked.x,aircraft.simPosition.z-parked.z):Infinity;
+    if((aircraft.speed??0)>1.5||distance>GROUND_SERVICE.departureReleaseRadius){this.releaseStand(aircraft);aircraft.currentAirportId=null;}
+  }
+  updateGateDockVisibility(){
+    for(const gate of this.gateWalkways)if(gate.dockGroup){const automatic=this.parkedAircraftAtGate(gate.gateIndex),manual=this.manualGroundServiceAt(this.definition.id,gate.gateIndex,"jetway"),service=manual?this.groundServiceState(manual,"jetway"):null,progress=automatic?.doorsOpen?1:(service?.progress??0);gate.dockGroup.visible=Boolean(automatic?.doorsOpen||manual);if(gate.dockTravelWorld){gate.dockGroup.position.copy(gate.dockTravelWorld).multiplyScalar(progress-1);gate.dockGroup.updateMatrix();}}
+    for(const stairs of this.islandStairs){const automatic=this.aircraft.find(aircraft=>aircraft.currentAirportId===this.islandDefinition?.id&&aircraft.standIndex===stairs.standIndex&&SERVICE_STATES.has(aircraft.state))??null,manual=this.manualGroundServiceAt(this.islandDefinition?.id,stairs.standIndex,"stairs"),service=manual?this.groundServiceState(manual,"stairs"):null,progress=automatic?1:(service?.progress??0);stairs.group.visible=Boolean(automatic||manual);if(stairs.approachOffset){stairs.group.position.copy(stairs.approachOffset).multiplyScalar(1-progress);stairs.group.updateMatrix();}}
+  }
 
   resolveWalkSurface(position,currentFeetY=0,{maxStepUp=.58,maxStepDown=.92,bodyHeight=1.72}={}){
     let globalBest=null,globalPriority=-Infinity,globalDelta=Infinity,nearest=null,nearestDelta=Infinity,wallHit=null;
@@ -970,7 +1033,7 @@ export class AirportSystem{
     return best;
   }
 
-  passengerNearDoor(state){return Boolean(state&&SERVICE_STATES.has(state.aircraft.state)&&state.aircraft.doorsOpen&&state.localPosition.z>=3.30&&state.localPosition.x>=.12);}
+  passengerNearDoor(state){return Boolean(state&&(SERVICE_STATES.has(state.aircraft.state)||this.aircraftHasConnectedGroundService(state.aircraft))&&state.aircraft.doorsOpen&&state.localPosition.z>=3.30&&state.localPosition.x>=.12);}
 
   detachPassenger(player){
     const state=this.passengerState;if(!state||!player)return false;const aircraft=state.aircraft,data=aircraft.mesh.userData,floor=data.cabinFloorY??1.15;
@@ -984,24 +1047,37 @@ export class AirportSystem{
     const state=this.passengerState;if(!player?.inAircraft||!state)return false;
     if(state.pilot){if((state.aircraft.speed??0)>1.5||state.aircraft.simPosition.y>.55){this.toast?.("Reduce speed and stop on the ground before leaving the cockpit");return true;}state.pilot=false;state.seated=false;state.localPosition.set(0,state.aircraft.mesh.userData.cabinFloorY??1.15,5.02);state.yaw=Math.PI;state.pitch=0;this.toast?.("Left the pilot seat");return true;}
     if(state.seated){state.seated=false;state.seat=null;state.localPosition.x=0;state.pitch=0;this.toast?.("Stood up");return true;}
-    if(state.localPosition.z>4.78){this.beginManualControl(state.aircraft);state.pilot=true;state.seated=true;state.seat=null;state.cameraIndex=0;state.localPosition.set(-.40,state.aircraft.mesh.userData.cabinFloorY??1.15,5.16);state.yaw=0;state.pitch=0;this.toast?.("Pilot: W nose down · S nose up · A/D bank + turn · Tab throttle up · Shift throttle down · Space brake · C camera · mouse look");return true;}
+    if(state.localPosition.z>4.78){this.beginManualControl(state.aircraft);state.pilot=true;state.seated=true;state.seat=null;state.cameraIndex=0;state.localPosition.set(-.40,state.aircraft.mesh.userData.cabinFloorY??1.15,5.16);state.yaw=0;state.pitch=0;this.toast?.("Pilot: W nose down · S nose up · A/D bank + turn · Tab/Shift throttle · hold R reverse thrust on ground · Space wheel brake · C camera");return true;}
     const seat=this.nearestPassengerSeat(state);if(seat){state.seated=true;state.seat=seat;state.localPosition.set(seat.x,state.aircraft.mesh.userData.cabinFloorY??1.15,seat.z+.03);state.yaw=0;state.pitch=0;this.toast?.(`Seated · row ${seat.row}${seat.side}`);return true;}
     if(this.passengerNearDoor(state))return this.detachPassenger(player);
     this.toast?.("Move beside a seat to sit, forward into the cockpit to fly, or to the open door to leave");return true;
   }
 
   beginManualControl(aircraft){
-    if(aircraft.manualControl)return;this.releaseStand(aircraft);this.releaseRunway(aircraft,aircraft.originAirportId);this.releaseRunway(aircraft,aircraft.destinationAirportId);aircraft.manualControl=true;aircraft.manualThrottle=THREE.MathUtils.clamp((aircraft.speed??0)/88,0,1);aircraft.manualEnginePower=aircraft.manualThrottle;aircraft.manualAirborne=aircraft.simPosition.y>.55;aircraft.manualVerticalSpeed=0;aircraft.manualRollRate=0;aircraft.manualSideslip=0;aircraft.manualElevator=0;aircraft.state="manual";aircraft.stateTime=0;aircraft.doorsOpen=false;aircraft.currentAirportId=null;aircraft.progress=0;aircraft.angleOfAttack=MANUAL_FLIGHT.trimAoADeg*DEG;
+    if(aircraft.manualControl)return;this.releaseRunway(aircraft,aircraft.originAirportId);this.releaseRunway(aircraft,aircraft.destinationAirportId);aircraft.manualControl=true;aircraft.manualThrottle=THREE.MathUtils.clamp((aircraft.speed??0)/Math.max(1,this.resolvedCruiseSpeed()),0,1);aircraft.manualEnginePower=aircraft.manualThrottle;aircraft.manualReversePower=0;aircraft.manualBrakePressure=0;aircraft.manualAirborne=aircraft.simPosition.y>.55;aircraft.manualVerticalSpeed=0;aircraft.manualRollRate=0;aircraft.manualSideslip=0;aircraft.manualElevator=0;aircraft.state="manual";aircraft.stateTime=0;aircraft.doorsOpen=false;aircraft.progress=0;aircraft.angleOfAttack=MANUAL_FLIGHT.trimAoADeg*DEG;
   }
+
+  manualTrimAoADegForSpeed(speed){const dynamicFactor=Math.max(.05,(Math.max(0,speed)/MANUAL_FLIGHT.referenceLiftSpeed)**2),requiredCl=.695/dynamicFactor;return THREE.MathUtils.clamp((requiredCl-.38)/.105,-2.75,MANUAL_FLIGHT.trimAoADeg);}
 
   updateManualAircraft(aircraft,dt){
     const state=this.passengerState,hasPilot=Boolean(state?.aircraft===aircraft&&state.pilot),input=this.input,gravity=MANUAL_FLIGHT.gravity;
+    const onGround=!aircraft.manualAirborne&&aircraft.simPosition.y<=.55,reverseHeld=Boolean(hasPilot&&onGround&&input?.isDown?.("KeyR")),brake=Boolean(hasPilot&&input?.isDown?.("Space"));
     if(hasPilot){
-      if(input?.isDown?.("Tab"))aircraft.manualThrottle=Math.min(1,(aircraft.manualThrottle??0)+dt*.30);
-      if(input?.isDown?.("ShiftLeft")||input?.isDown?.("ShiftRight"))aircraft.manualThrottle=Math.max(0,(aircraft.manualThrottle??0)-dt*.38);
+      // Reverse is a separate ground-only lever range. Holding R retards the
+      // forward levers to idle and spools reverse; it never produces backwards taxi.
+      if(reverseHeld)aircraft.manualThrottle=moveToward(aircraft.manualThrottle??0,0,dt*1.6);
+      else{
+        if(input?.isDown?.("Tab"))aircraft.manualThrottle=Math.min(1,(aircraft.manualThrottle??0)+dt*.30);
+        if(input?.isDown?.("ShiftLeft")||input?.isDown?.("ShiftRight"))aircraft.manualThrottle=Math.max(0,(aircraft.manualThrottle??0)-dt*.38);
+      }
     }
-    aircraft.manualEnginePower=moveToward(aircraft.manualEnginePower??aircraft.manualThrottle??0,aircraft.manualThrottle??0,(aircraft.manualThrottle>(aircraft.manualEnginePower??0)?MANUAL_FLIGHT.engineSpoolUp:MANUAL_FLIGHT.engineSpoolDown)*dt);
-    const onGround=!aircraft.manualAirborne&&aircraft.simPosition.y<=.55,brake=hasPilot&&input?.isDown?.("Space");
+    const serviceDepartureIntent=this.groundServicesBlockMovement(aircraft)&&((hasPilot&&(input?.isDown?.("Tab")||input?.isDown?.("KeyR")))||(aircraft.speed??0)>GROUND_SERVICE.stopSpeed);if(serviceDepartureIntent)this.requestGroundServiceRetraction(aircraft);this.updateGroundServices(aircraft,dt);
+    const forwardTarget=reverseHeld?0:(aircraft.manualThrottle??0);aircraft.manualEnginePower=moveToward(aircraft.manualEnginePower??forwardTarget,forwardTarget,(forwardTarget>(aircraft.manualEnginePower??0)?MANUAL_FLIGHT.engineSpoolUp:MANUAL_FLIGHT.engineSpoolDown)*dt);
+    // Mechanical/FADEC-style interlock: the reverser cannot spool until forward
+    // thrust has actually returned close to idle. Holding R from high power first
+    // retards the engine, then deploys reverse.
+    const reverseAvailable=reverseHeld&&(aircraft.manualEnginePower??0)<=.08&&(aircraft.manualThrottle??0)<=.05;aircraft.manualReversePower=moveToward(aircraft.manualReversePower??0,reverseAvailable?1:0,(reverseAvailable?MANUAL_FLIGHT.reverseSpoolUp:MANUAL_FLIGHT.reverseSpoolDown)*dt);
+    aircraft.manualBrakePressure=moveToward(aircraft.manualBrakePressure??0,brake?1:0,(brake?MANUAL_FLIGHT.brakeApplyRate:MANUAL_FLIGHT.brakeReleaseRate)*dt);
     // One lateral control path only. The aircraft model/heading frame uses the
     // opposite lateral sign to the previous mapping: A must drive the negative
     // turn command and D the positive visual turn, so swap the raw key sign here.
@@ -1009,11 +1085,20 @@ export class AirportSystem{
     // W pushes the nose down; S pulls the nose up. Arrow keys are intentionally
     // ignored for aircraft movement.
     const pitchCommand=hasPilot?((input?.isDown?.("KeyS")?1:0)-(input?.isDown?.("KeyW")?1:0)):0;
-    const speed=Math.max(0,aircraft.speed??0),gearDrag=this.gearTargetFor(aircraft)*.16,flapDrag=this.flapTargetFor(aircraft)*.22;
+    const speed=Math.max(0,aircraft.speed??0),gearDrag=this.gearTargetFor(aircraft)*.16,flapDrag=this.flapTargetFor(aircraft)*.22,servicesBlocking=this.groundServicesBlockMovement(aircraft),cruiseSpeed=this.resolvedCruiseSpeed();
     if(onGround){
       aircraft.manualRollRate=moveToward(aircraft.manualRollRate??0,0,90*DEG*dt);aircraft.bank=moveToward(aircraft.bank??0,0,65*DEG*dt);aircraft.manualVerticalSpeed=0;aircraft.angleOfAttack=moveToward(aircraft.angleOfAttack??0,0,9*DEG*dt);
       const steerInput=turnInput,steerAuthority=THREE.MathUtils.clamp(speed/5,0,1)*(1-THREE.MathUtils.clamp((speed-24)/28,0,.72));aircraft.heading+=(steerInput*24*DEG*steerAuthority)*dt;
-      const thrustAccel=(aircraft.manualEnginePower??0)*4.9,rolling=.30+speed*.010,brakeAccel=brake?8.5:0,aeroDrag=.00034*speed*speed;aircraft.speed=THREE.MathUtils.clamp(speed+(thrustAccel-rolling-brakeAccel-aeroDrag)*dt,0,MANUAL_FLIGHT.groundMaxSpeed);
+      const thrustAccel=servicesBlocking?0:(aircraft.manualEnginePower??0)*4.9,rolling=.11+speed*.0042,aeroDrag=.00024*speed*speed;
+      // Wheel braking builds pressure instead of applying an instantaneous 0.87 g
+      // speed cut. Reverse is deliberately strongest at high rollout speed and
+      // fades toward idle effectiveness below taxi speed, matching transport-jet use.
+      const reverseSpeedFactor=smooth01((speed-MANUAL_FLIGHT.reverseFadeEnd)/Math.max(1,MANUAL_FLIGHT.reverseFadeStart-MANUAL_FLIGHT.reverseFadeEnd)),reverseAccel=(aircraft.manualReversePower??0)*THREE.MathUtils.lerp(MANUAL_FLIGHT.reverseIdleAccel,MANUAL_FLIGHT.reverseMaxAccel,reverseSpeedFactor),brakeAccel=(aircraft.manualBrakePressure??0)*MANUAL_FLIGHT.wheelBrakeMaxAccel,groundSpoilerDrag=(speed>18?.00018*speed*speed:0),serviceChockAccel=servicesBlocking?Math.min(5.5,1.2+speed*.18):0;
+      const nextSpeed=Math.max(0,speed+(thrustAccel-rolling-aeroDrag-groundSpoilerDrag-brakeAccel-reverseAccel-serviceChockAccel)*dt),poweredLimit=MANUAL_FLIGHT.groundPoweredSpeedLimit;
+      // Never throw away touchdown momentum by clamping a fast aircraft to the
+      // take-off/taxi limit in one frame. The limit only prevents further powered
+      // acceleration while already below it.
+      aircraft.speed=Math.min(nextSpeed,Math.max(speed,poweredLimit));
       this._manualForward.set(Math.sin(aircraft.heading),0,Math.cos(aircraft.heading));aircraft.simPosition.addScaledVector(this._manualForward,aircraft.speed*dt);aircraft.simPosition.y=.18;
       const rotateRequested=pitchCommand>.05&&aircraft.speed>=MANUAL_FLIGHT.takeoffSpeed;if(rotateRequested){aircraft.manualAirborne=true;aircraft.manualVerticalSpeed=.6;aircraft.angleOfAttack=5.5*DEG;}
       aircraft.pitch=moveToward(aircraft.pitch??0,rotateRequested?-5.5*DEG:0,16*DEG*dt);
@@ -1021,17 +1106,17 @@ export class AirportSystem{
       const targetRollRate=-turnInput*MANUAL_FLIGHT.maxRollRateDeg*DEG;aircraft.manualRollRate=moveToward(aircraft.manualRollRate??0,targetRollRate,(turnInput?105:72)*DEG*dt);aircraft.manualRollRate*=Math.exp(-dt*(turnInput?1.4:2.2));aircraft.bank=THREE.MathUtils.clamp((aircraft.bank??0)+aircraft.manualRollRate*dt,-MANUAL_FLIGHT.maxBankDeg*DEG,MANUAL_FLIGHT.maxBankDeg*DEG);
       if(!turnInput&&Math.abs(aircraft.bank)<1.2*DEG)aircraft.bank=moveToward(aircraft.bank,0,4*DEG*dt);
       aircraft.manualElevator=moveToward(aircraft.manualElevator??0,pitchCommand,(pitchCommand?3.0:2.2)*dt);aircraft.manualSideslip=moveToward(aircraft.manualSideslip??0,turnInput*.16,(turnInput?3.2:2.6)*dt);
-      const aoaTarget=(MANUAL_FLIGHT.trimAoADeg+(aircraft.manualElevator??0)*MANUAL_FLIGHT.maxElevatorAoADeg)*DEG;aircraft.angleOfAttack=moveToward(aircraft.angleOfAttack??0,aoaTarget,7.5*DEG*dt);
+      const trimAoADeg=this.manualTrimAoADegForSpeed(aircraft.speed),aoaTarget=(trimAoADeg+(aircraft.manualElevator??0)*MANUAL_FLIGHT.maxElevatorAoADeg)*DEG;aircraft.angleOfAttack=moveToward(aircraft.angleOfAttack??0,aoaTarget,7.5*DEG*dt);
       const aoaDeg=THREE.MathUtils.radToDeg(aircraft.angleOfAttack),absAoA=Math.abs(aoaDeg),stallStart=MANUAL_FLIGHT.stallAoADeg,deepStall=MANUAL_FLIGHT.deepStallAoADeg;let liftCurve=1;if(absAoA>stallStart)liftCurve=THREE.MathUtils.clamp(1-(absAoA-stallStart)/(deepStall-stallStart)*.72,.28,1);
       const cl=Math.max(-.25,.38+.105*aoaDeg)*liftCurve,dynamicFactor=(aircraft.speed/MANUAL_FLIGHT.referenceLiftSpeed)**2,liftAccel=gravity*dynamicFactor*(cl/.695)*Math.cos(aircraft.bank);
-      const inducedDrag=.055*Math.max(0,dynamicFactor*(cl/.695))**2,aoaDrag=.0065*Math.abs(aoaDeg),baseDrag=.00030*aircraft.speed*aircraft.speed+.006*aircraft.speed,dragAccel=baseDrag+inducedDrag+aoaDrag+gearDrag+flapDrag,thrustAccel=(aircraft.manualEnginePower??0)*3.55;aircraft.speed=THREE.MathUtils.clamp(aircraft.speed+(thrustAccel-dragAccel)*dt,18,MANUAL_FLIGHT.maxFlightSpeed);
+      const inducedDrag=.055*Math.max(0,dynamicFactor*(cl/.695))**2,aoaDrag=.0065*Math.abs(aoaDeg),baseDrag=.00030*aircraft.speed*aircraft.speed+.006*aircraft.speed,dragAccel=baseDrag+inducedDrag+aoaDrag+gearDrag+flapDrag,highSpeedBlend=smooth01((aircraft.speed-MANUAL_FLIGHT.highSpeedThrustBlendStart)/Math.max(1,cruiseSpeed-MANUAL_FLIGHT.highSpeedThrustBlendStart)),availableThrust=THREE.MathUtils.lerp(MANUAL_FLIGHT.lowSpeedThrustAccel,MANUAL_FLIGHT.cruiseThrustAccel,highSpeedBlend),thrustAccel=(aircraft.manualEnginePower??0)*availableThrust;aircraft.speed=THREE.MathUtils.clamp(aircraft.speed+(thrustAccel-dragAccel)*dt,18,cruiseSpeed);
       const verticalAccel=liftAccel-gravity;aircraft.manualVerticalSpeed=THREE.MathUtils.clamp((aircraft.manualVerticalSpeed??0)+verticalAccel*dt,-32,24);aircraft.manualVerticalSpeed*=Math.exp(-dt*.055);
       const bankTurnSign=-Math.sign(aircraft.bank||0),coordinatedTurn=bankTurnSign*gravity*Math.tan(Math.abs(aircraft.bank))/Math.max(aircraft.speed,24),coordinatedYawAssist=(aircraft.manualSideslip??0)*2.2*DEG*THREE.MathUtils.clamp(62/Math.max(aircraft.speed,28),.55,1.25);aircraft.heading+=(coordinatedTurn+coordinatedYawAssist)*dt;
       const flightPathAngle=Math.atan2(aircraft.manualVerticalSpeed,Math.max(aircraft.speed,1)),bodyNoseUp=flightPathAngle+aircraft.angleOfAttack;aircraft.pitch=THREE.MathUtils.clamp(-bodyNoseUp,-20*DEG,13*DEG);
       const horizontalSpeed=Math.sqrt(Math.max(0,aircraft.speed*aircraft.speed-aircraft.manualVerticalSpeed*aircraft.manualVerticalSpeed));this._manualForward.set(Math.sin(aircraft.heading),0,Math.cos(aircraft.heading));aircraft.simPosition.addScaledVector(this._manualForward,horizontalSpeed*dt);aircraft.simPosition.y+=(aircraft.manualVerticalSpeed??0)*dt;
       if(aircraft.simPosition.y<=.18){aircraft.simPosition.y=.18;aircraft.manualAirborne=false;aircraft.manualVerticalSpeed=0;aircraft.pitch=moveToward(aircraft.pitch,0,18*DEG*dt);aircraft.bank=moveToward(aircraft.bank,0,35*DEG*dt);}
     }
-    aircraft.targetSpeed=aircraft.speed;aircraft._orientationEuler.set(aircraft.pitch,aircraft.heading,aircraft.bank,"YXZ");aircraft.simQuaternion.setFromEuler(aircraft._orientationEuler);
+    this.releaseManualStandIfDeparted(aircraft);aircraft.targetSpeed=aircraft.speed;aircraft._orientationEuler.set(aircraft.pitch,aircraft.heading,aircraft.bank,"YXZ");aircraft.simQuaternion.setFromEuler(aircraft._orientationEuler);
   }
 
   updatePassengerRide(dt,player){
@@ -1070,7 +1155,7 @@ export class AirportSystem{
 
   getPlayerState(){
     const state=this.passengerState;if(!state)return null;const aircraft=state.aircraft,origin=this.airportById.get(aircraft.originAirportId),destination=this.airportById.get(aircraft.destinationAirportId);
-    return{id:aircraft.id,registration:aircraft.registration,state:aircraft.state,speed:aircraft.speed,origin:origin?.name??aircraft.originAirportId,destination:destination?.name??aircraft.destinationAirportId,originCode:origin?.code??"—",destinationCode:destination?.code??"—",seated:state.seated,pilot:state.pilot,cameraMode:state.pilot?(AIRCRAFT_CAMERA_MODES[state.cameraIndex??0]??"PILOT"):"CABIN",manual:Boolean(aircraft.manualControl),throttle:aircraft.manualThrottle??0,enginePower:aircraft.manualEnginePower??aircraft.manualThrottle??0,altitude:Math.max(0,aircraft.simPosition.y-.18),verticalSpeed:aircraft.manualVerticalSpeed??0,headingDeg:normalizeDegrees(THREE.MathUtils.radToDeg(aircraft.heading??0)),bankDeg:THREE.MathUtils.radToDeg(aircraft.bank??0),aoaDeg:THREE.MathUtils.radToDeg(aircraft.angleOfAttack??0),stallWarning:Boolean(aircraft.manualAirborne&&((THREE.MathUtils.radToDeg(aircraft.angleOfAttack??0)>13.5)||(aircraft.speed??0)<25)),flaps:aircraft.mesh.userData.flapDeployment??0,gear:aircraft.mesh.userData.gearDeployment??1};
+    return{id:aircraft.id,registration:aircraft.registration,state:aircraft.state,speed:aircraft.speed,speedSemantic:"world-space groundspeed",cruiseSpeed:this.resolvedCruiseSpeed(),origin:origin?.name??aircraft.originAirportId,destination:destination?.name??aircraft.destinationAirportId,originCode:origin?.code??"—",destinationCode:destination?.code??"—",seated:state.seated,pilot:state.pilot,cameraMode:state.pilot?(AIRCRAFT_CAMERA_MODES[state.cameraIndex??0]??"PILOT"):"CABIN",manual:Boolean(aircraft.manualControl),throttle:aircraft.manualThrottle??0,enginePower:aircraft.manualEnginePower??aircraft.manualThrottle??0,reversePower:aircraft.manualControl?(aircraft.manualReversePower??0):(aircraft.reverseThrust??0),brakePressure:aircraft.manualBrakePressure??0,altitude:Math.max(0,aircraft.simPosition.y-.18),verticalSpeed:aircraft.manualVerticalSpeed??0,headingDeg:normalizeDegrees(THREE.MathUtils.radToDeg(aircraft.heading??0)),bankDeg:THREE.MathUtils.radToDeg(aircraft.bank??0),aoaDeg:THREE.MathUtils.radToDeg(aircraft.angleOfAttack??0),stallWarning:Boolean(aircraft.manualAirborne&&((THREE.MathUtils.radToDeg(aircraft.angleOfAttack??0)>13.5)||(aircraft.speed??0)<25)),flaps:aircraft.mesh.userData.flapDeployment??0,gear:aircraft.mesh.userData.gearDeployment??1,groundServices:{stairs:this.groundServiceDisplayState(aircraft,"stairs"),jetway:this.groundServiceDisplayState(aircraft,"jetway")}};
   }
 
   organizeQualityDetailGroups(){
@@ -1176,7 +1261,7 @@ export class AirportSystem{
       {origin:this.islandDefinition.id,destination:this.definition.id,departureStand:2,state:"descent",progress:.32,reserveStand:true}
     ];
     for(let i=0;i<count;i++){
-      const descriptor=pattern[i%pattern.length],mesh=createAircraft(i),initialSpeed=ACTIVE_FLIGHT_STATES.has(descriptor.state)?(descriptor.state==="enroute"?(this.aviation.cruiseSpeed??AIRCRAFT_SPEED.enroute):(AIRCRAFT_SPEED[descriptor.state]??60))*CONFIG.aircraftSpeedMultiplier:0;mesh.userData.registration=registrations[i%registrations.length];this.scene.add(mesh);const aircraft={id:`AIR-${String(i+1).padStart(2,"0")}`,registration:registrations[i%registrations.length],mesh,paths:{},pathLengths:{},state:descriptor.state,progress:descriptor.progress??0,stateTime:descriptor.stateTime??0,standIndex:descriptor.stand??null,gateIndex:descriptor.stand??null,departureStandIndex:descriptor.departureStand??descriptor.stand??0,destinationStandIndex:null,currentAirportId:descriptor.airportId??null,originAirportId:descriptor.origin??descriptor.airportId,destinationAirportId:descriptor.destination??(descriptor.airportId?this.otherAirportId(descriptor.airportId):null),speed:initialSpeed,targetSpeed:initialSpeed,doorsOpen:DOOR_OPEN_STATES.has(descriptor.state),cycles:0,_position:new THREE.Vector3(),_tangent:new THREE.Vector3(),_tangent2:new THREE.Vector3(),_orientationEuler:new THREE.Euler(0,0,0,"YXZ"),simPosition:new THREE.Vector3(),previousSimPosition:new THREE.Vector3(),simQuaternion:new THREE.Quaternion(),previousSimQuaternion:new THREE.Quaternion(),heading:null,pitch:0,angleOfAttack:0,bank:0,targetBank:0,lodTier:"full",dynamicLightsActive:false,detailedShadowsActive:false,parkedPosition:null,manualControl:false,manualThrottle:0,manualEnginePower:0,manualAirborne:false,manualVerticalSpeed:0,manualRollRate:0,manualSideslip:0,manualElevator:0};
+      const descriptor=pattern[i%pattern.length],mesh=createAircraft(i),initialSpeed=ACTIVE_FLIGHT_STATES.has(descriptor.state)?(descriptor.state==="enroute"?this.resolvedCruiseSpeed():(AIRCRAFT_SPEED[descriptor.state]??60)*CONFIG.aircraftSpeedMultiplier):0;mesh.userData.registration=registrations[i%registrations.length];this.scene.add(mesh);const aircraft={id:`AIR-${String(i+1).padStart(2,"0")}`,registration:registrations[i%registrations.length],mesh,paths:{},pathLengths:{},state:descriptor.state,progress:descriptor.progress??0,stateTime:descriptor.stateTime??0,standIndex:descriptor.stand??null,gateIndex:descriptor.stand??null,departureStandIndex:descriptor.departureStand??descriptor.stand??0,destinationStandIndex:null,currentAirportId:descriptor.airportId??null,originAirportId:descriptor.origin??descriptor.airportId,destinationAirportId:descriptor.destination??(descriptor.airportId?this.otherAirportId(descriptor.airportId):null),speed:initialSpeed,targetSpeed:initialSpeed,doorsOpen:DOOR_OPEN_STATES.has(descriptor.state),cycles:0,_position:new THREE.Vector3(),_tangent:new THREE.Vector3(),_tangent2:new THREE.Vector3(),_orientationEuler:new THREE.Euler(0,0,0,"YXZ"),simPosition:new THREE.Vector3(),previousSimPosition:new THREE.Vector3(),simQuaternion:new THREE.Quaternion(),previousSimQuaternion:new THREE.Quaternion(),heading:null,pitch:0,angleOfAttack:0,bank:0,targetBank:0,lodTier:"full",dynamicLightsActive:false,detailedShadowsActive:false,parkedPosition:null,manualControl:false,manualThrottle:0,manualEnginePower:0,manualReversePower:0,manualBrakePressure:0,manualAirborne:false,manualVerticalSpeed:0,manualRollRate:0,manualSideslip:0,manualElevator:0,reverseThrust:0,groundServices:{stairs:{state:null,progress:0,timer:0},jetway:{state:null,progress:0,timer:0}}};
       this.aircraft.push(aircraft);
       if(descriptor.airportId){this.occupyStand(aircraft,descriptor.airportId,descriptor.stand);aircraft.parkedPosition=this.parkedPositionFor(this.airportById.get(descriptor.airportId),descriptor.stand);this.prepareNextLeg(aircraft);}else{const origin=this.airportById.get(aircraft.originAirportId),destination=this.airportById.get(aircraft.destinationAirportId);this.setAircraftPaths(aircraft,this.buildLegPaths(origin,destination,aircraft.departureStandIndex,0));if(descriptor.reserveStand)this.reserveArrivalStand(aircraft);if(["descent","approach","landingRoll","runwayExit"].includes(descriptor.state))this.requestRunway(aircraft,aircraft.destinationAirportId);else if(descriptor.state==="takeoff")this.requestRunway(aircraft,aircraft.originAirportId);}
       this.placeAircraft(aircraft,{snap:true});
@@ -1189,20 +1274,22 @@ export class AirportSystem{
     aircraft.state=state;aircraft.progress=0;aircraft.stateTime=0;aircraft.doorsOpen=DOOR_OPEN_STATES.has(state);
   }
   stateCurve(aircraft){return aircraft.paths[aircraft.state]??null;}
+  resolvedCruiseSpeed(){return Math.max(0,(this.aviation.cruiseSpeed??AIRCRAFT_SPEED.enroute)*CONFIG.aircraftSpeedMultiplier);}
   targetSpeedFor(aircraft){
-    const p=THREE.MathUtils.clamp(aircraft.progress,0,1),cruise=this.aviation.cruiseSpeed??AIRCRAFT_SPEED.enroute;let speed=AIRCRAFT_SPEED[aircraft.state]??8;
-    if(aircraft.state==="taxiOut")speed=THREE.MathUtils.lerp(8,.9,smooth01((p-.72)/.28));
-    else if(aircraft.state==="takeoff")speed=THREE.MathUtils.lerp(10,AIRCRAFT_SPEED.takeoff,smooth01(p/.46));
+    const p=THREE.MathUtils.clamp(aircraft.progress,0,1),cruise=this.resolvedCruiseSpeed(),multiplier=CONFIG.aircraftSpeedMultiplier;let speed=(AIRCRAFT_SPEED[aircraft.state]??8)*multiplier;
+    if(aircraft.state==="taxiOut")speed=THREE.MathUtils.lerp(8,.18,smooth01((p-.72)/.28))*multiplier;
+    else if(aircraft.state==="takeoff")speed=THREE.MathUtils.lerp(10,AIRCRAFT_SPEED.takeoff,smooth01(p/.46))*multiplier;
     else if(aircraft.state==="enroute")speed=cruise;
-    else if(aircraft.state==="holding")speed=Math.min(74,cruise*.84);
-    else if(aircraft.state==="goAround")speed=Math.max(70,Math.min(78,cruise*.88));
-    else if(aircraft.state==="approach")speed=THREE.MathUtils.lerp(50,34,smooth01((p-.18)/.82));
-    else if(aircraft.state==="landingRoll")speed=THREE.MathUtils.lerp(33,6,smooth01(p));
-    else if(aircraft.state==="taxiIn")speed=THREE.MathUtils.lerp(7,1.1,smooth01((p-.72)/.28));
-    return Math.max(0,speed*CONFIG.aircraftSpeedMultiplier);
+    else if(aircraft.state==="holding")speed=Math.min(74*multiplier,cruise*.84);
+    else if(aircraft.state==="goAround")speed=Math.max(70*multiplier,Math.min(78*multiplier,cruise*.88));
+    else if(aircraft.state==="approach")speed=THREE.MathUtils.lerp(50,34,smooth01((p-.18)/.82))*multiplier;
+    else if(aircraft.state==="landingRoll")speed=THREE.MathUtils.lerp(33,5.2,smooth01(p))*multiplier;
+    else if(aircraft.state==="taxiIn")speed=THREE.MathUtils.lerp(7,.18,smooth01((p-.72)/.28))*multiplier;
+    return Math.max(0,speed);
   }
   updateAircraftSpeed(aircraft,dt,target){
-    const state=aircraft.state,rates=state==="takeoff"?{up:5.2,down:2.2}:state==="goAround"?{up:4.5,down:2.0}:state==="landingRoll"?{up:1.0,down:6.2}:state==="taxiOut"||state==="runwayExit"||state==="taxiIn"?{up:1.8,down:3.2}:state==="approach"||state==="descent"||state==="holding"?{up:2.0,down:2.5}:{up:2.6,down:2.2};
+    const state=aircraft.state,reverseTarget=state==="landingRoll"&&aircraft.speed>18&&aircraft.progress<.72?1:0;aircraft.reverseThrust=moveToward(aircraft.reverseThrust??0,reverseTarget,(reverseTarget?1.15:1.9)*Math.max(0,dt));
+    const landingDecel=1.55+(aircraft.reverseThrust??0)*.70,rates=state==="takeoff"?{up:5.2,down:2.0}:state==="goAround"?{up:4.5,down:2.0}:state==="landingRoll"?{up:.8,down:landingDecel}:state==="taxiOut"||state==="runwayExit"||state==="taxiIn"?{up:1.55,down:1.85}:state==="approach"||state==="descent"||state==="holding"?{up:2.0,down:2.3}:{up:2.6,down:2.0};
     const rate=target>=aircraft.speed?rates.up:rates.down;aircraft.targetSpeed=target;aircraft.speed=moveToward(aircraft.speed,target,rate*Math.max(0,dt)*CONFIG.aircraftSpeedMultiplier);return aircraft.speed;
   }
   targetAngleOfAttack(aircraft){
@@ -1238,6 +1325,7 @@ export class AirportSystem{
     const data=aircraft.mesh.userData,k=1-Math.exp(-Math.max(0,frameDt)*3.2),gearTarget=this.gearTargetFor(aircraft),flapTarget=this.flapTargetFor(aircraft);data.gearDeployment=THREE.MathUtils.lerp(data.gearDeployment??1,gearTarget,k);data.flapDeployment=THREE.MathUtils.lerp(data.flapDeployment??0,flapTarget,k);
     if(data.gearGroup){data.gearGroup.visible=data.gearDeployment>.025;data.gearGroup.position.y=(1-data.gearDeployment)*.84;data.gearGroup.rotation.x=(1-data.gearDeployment)*-.34;}
     for(const flap of data.flapMeshes??[])flap.rotation.x=(flap.userData.baseRotationX??0)-data.flapDeployment*18*DEG;for(const slat of data.slatMeshes??[])slat.position.z=(slat.userData.baseZ??slat.position.z)+data.flapDeployment*.13;
+    const reverseTarget=aircraft.manualControl?(aircraft.manualReversePower??0):(aircraft.reverseThrust??0),reverseK=1-Math.exp(-Math.max(0,frameDt)*5);data.reverserDeployment=THREE.MathUtils.lerp(data.reverserDeployment??0,reverseTarget,reverseK);for(const sleeve of data.reverserSleeves??[])sleeve.position.z=(sleeve.userData.baseZ??-.58)-data.reverserDeployment*.34;
   }
   render(alpha,frameDt,player=null){
     const blend=THREE.MathUtils.clamp(alpha,0,1),focus=this.camera?.position??this.chunkManager?.focus,now=performance.now()/1000;this.aircraftLodCounts={full:0,medium:0,low:0,far:0,hidden:0,dynamicLights:0,detailedShadows:0};
@@ -1250,7 +1338,7 @@ export class AirportSystem{
   advancePath(aircraft,dt,speed){const length=aircraft.pathLengths[aircraft.state]??1;aircraft.progress+=speed*dt/length;return aircraft.progress>=1;}
   update(dt,time,player=null){
     this.activeFlights=0;
-    if(!this.passengerState&&player&&!player.inAircraft&&!player.inVehicle&&!player.inTrain&&!player.inBus)for(const aircraft of this.aircraft){if(SERVICE_STATES.has(aircraft.state)&&this.isPlayerInsideAircraft(player,aircraft)){this.attachPassenger(player,aircraft);break;}}
+    if(!this.passengerState&&player&&!player.inAircraft&&!player.inVehicle&&!player.inTrain&&!player.inBus)for(const aircraft of this.aircraft){if((SERVICE_STATES.has(aircraft.state)||this.aircraftHasConnectedGroundService(aircraft))&&this.isPlayerInsideAircraft(player,aircraft)){this.attachPassenger(player,aircraft);break;}}
     for(const aircraft of this.aircraft){
       aircraft.previousSimPosition.copy(aircraft.simPosition);aircraft.previousSimQuaternion.copy(aircraft.simQuaternion);aircraft.stateTime+=dt;aircraft.doorsOpen=DOOR_OPEN_STATES.has(aircraft.state);
       if(aircraft.manualControl){aircraft.doorsOpen=false;this.updateManualAircraft(aircraft,dt);if(aircraft.manualAirborne)this.activeFlights++;this.enforceGroundSeparation(aircraft);aircraft.mesh.position.copy(aircraft.simPosition);aircraft.mesh.quaternion.copy(aircraft.simQuaternion);continue;}

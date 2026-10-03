@@ -17,6 +17,10 @@
     "validate:station-collisions": "node scripts/station-walk-collision-validation.mjs",
     "audit:stair-collision": "node scripts/stair-collision-volume-audit.mjs benchmarks/stair-collision-volume-audit.json",
     "validate:aviation": "node scripts/validate-aviation-network.mjs",
-    "validate:flight": "node scripts/validate-flight-sim.mjs"
+    "validate:flight": "node scripts/validate-flight-sim.mjs",
+    "validate:manual-flight": "node scripts/validate-manual-flight-ground-services.mjs"
+  },
+  "devDependencies": {
+    "three": "0.180.0"
   }
 }

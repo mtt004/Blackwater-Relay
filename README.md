@@ -60,10 +60,10 @@ Manual aircraft now use a simplified force-based model rather than fixed per-inp
 - **N** — advance time
 - **I** — create an incident and dispatch an emergency vehicle
 - **G** — show or hide chunk diagnostics
-- **R** — reverse a stopped player-controlled HST
+- **R** — reverse a stopped player-controlled HST; while manually flying an aircraft, hold R on the ground to deploy reverse thrust
 - **J** — switch a stopped HST between the City Loop and Airport Loop at Industrial Exchange
 - **Mouse** — free-look while walking, travelling inside a passenger carriage, or using any aircraft camera
-- **Aircraft pilot** — W nose down, S nose up, A bank/turn left, D bank/turn right, Tab throttle up, Shift throttle down, Space wheel brake, C camera; arrow keys are not used for aircraft movement. The pilot HUD uses kt / ft / ft·min⁻¹ and shows heading, bank, AoA, gear and flaps
+- **Aircraft pilot** — W nose down, S nose up, A bank/turn left, D bank/turn right, Tab throttle up, Shift throttle down, hold R for ground-only reverse thrust, Space progressive wheel brake, C camera; arrow keys are not used for aircraft movement. The pilot HUD uses kt / ft / ft·min⁻¹ and shows heading, bank, AoA, brake/reverse state, gear and flaps
 
 ## UK road layout and grade-separated railway
 

@@ -54,6 +54,12 @@
     </div>
     <div class="meter"><span id="throttle-meter"></span></div>
     <p id="mode">DRIVING · CHASE CAMERA</p>
+    <section id="ground-services" class="ground-services" hidden aria-label="Aircraft ground services">
+      <div class="ground-services-heading">Ground services</div>
+      <button id="ground-service-stairs" type="button"><span>Passenger stairs</span><b id="ground-service-stairs-state">UNAVAILABLE</b></button>
+      <button id="ground-service-jetway" type="button"><span>Airbridge</span><b id="ground-service-jetway-state">UNAVAILABLE</b></button>
+      <small id="ground-service-hint">U stairs · Y airbridge</small>
+    </section>
   </aside>
 
   <aside class="right-panel glass">
@@ -113,8 +119,9 @@
       <p><kbd>S</kbd> car brake / HST service brake / aircraft nose up</p>
       <p><kbd>A/D</kbd> car steering / aircraft bank + coordinated turn (A left, D right)</p>
       <p><kbd>Tab / Shift</kbd> aircraft throttle up / down</p>
-      <p><kbd>Space</kbd> car handbrake / HST emergency brake / aircraft wheel brake</p>
-      <p><kbd>R</kbd> reverse HST direction while stopped</p>
+      <p><kbd>U / Y</kbd> request or retract passenger stairs / airbridge while parked</p>
+      <p><kbd>Space</kbd> car handbrake / HST emergency brake / aircraft wheel brake (progressive)</p>
+      <p><kbd>R</kbd> reverse HST direction while stopped / hold for aircraft reverse thrust on the ground</p>
       <p><kbd>J</kbd> request a protected route between City and Airport loops at Industrial Exchange</p>
       <p><kbd>V</kbd> toggle railway operations debug mode</p>
       <p><kbd>B</kbd> show exact collision hitboxes</p>
