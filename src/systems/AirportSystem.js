@@ -122,7 +122,7 @@ function addFacadeText(group,def,text,centreX,centreY,z,height,mat,name){
 // Independent Blackwater Relay aircraft asset.
 // Geometry below was authored procedurally for this project from public dimensional
 // data and photographic reference. It does not load, trace or derive topology from
-// any third-party 3D model. See ASSET_PROVENANCE.md.
+// any third-party 3D model. See README.md.
 const A320_REFERENCE=Object.freeze({lengthM:37.57,spanM:35.80,heightM:11.76,fuselageDiameterM:3.95});
 const AIRCRAFT_MODEL=Object.freeze({length:15.1,span:15.1*(A320_REFERENCE.spanM/A320_REFERENCE.lengthM),height:4.9});
 let sharedWingGeometry=null,sharedTailplaneGeometry=null,sharedFinGeometry=null,independentFuselageGeometry=null,independentLiveryTexture=null;
@@ -676,9 +676,14 @@ export class AirportSystem{
     const addBridgeSegment=(standNo,a,b,width=2.45,wallHeight=2.32)=>{
       const aWorld=localPoint(d,a[0],a[1]-.06,a[2]),bWorld=localPoint(d,b[0],b[1]-.06,b[2]),floor=stripBetween(aWorld,bWorld,width,.12,bridgeFloorMat);floor.name=`airport-jetway-${standNo}-floor`;this.group.add(floor);
       const dx=b[0]-a[0],dz=b[2]-a[2],len=Math.max(.001,Math.hypot(dx,dz)),rx=dz/len,rz=-dx/len,half=width*.5;
+      // A continuous darker kick strip and carpet runner keep the tunnel
+      // interior from reading as bare boxes.
+      const runner=stripBetween(localPoint(d,a[0],a[1]+.012,a[2]),localPoint(d,b[0],b[1]+.012,b[2]),width*.62,.014,material(0x3c4247,.92,.02),{cast:false});runner.name=`airport-jetway-${standNo}-floor-runner`;this.group.add(runner);
       for(const side of[-1,1]){
         const oa=[a[0]+rx*half*side,a[1]+wallHeight*.5,a[2]+rz*half*side],ob=[b[0]+rx*half*side,b[1]+wallHeight*.5,b[2]+rz*half*side],wall=stripBetween(localPoint(d,...oa),localPoint(d,...ob),.10,wallHeight,bridgeGlass);wall.name=`airport-jetway-${standNo}-glass-wall`;this.group.add(wall);
         const rail=stripBetween(localPoint(d,a[0]+rx*(half-.08)*side,a[1]+.48,a[2]+rz*(half-.08)*side),localPoint(d,b[0]+rx*(half-.08)*side,b[1]+.48,b[2]+rz*(half-.08)*side),.06,.08,bridgeFrame);rail.name=`airport-jetway-${standNo}-knee-rail`;this.group.add(rail);
+        const handrail=stripBetween(localPoint(d,a[0]+rx*(half-.05)*side,a[1]+1.02,a[2]+rz*(half-.05)*side),localPoint(d,b[0]+rx*(half-.05)*side,b[1]+1.02,b[2]+rz*(half-.05)*side),.05,.05,material(0xcfd4d6,.38,.55),{cast:false});handrail.name=`airport-jetway-${standNo}-handrail`;this.group.add(handrail);
+        const kick=stripBetween(localPoint(d,a[0]+rx*(half-.04)*side,a[1]+.10,a[2]+rz*(half-.04)*side),localPoint(d,b[0]+rx*(half-.04)*side,b[1]+.10,b[2]+rz*(half-.04)*side),.045,.20,bellowsMat,{cast:false});kick.name=`airport-jetway-${standNo}-kick-strip`;this.group.add(kick);
       }
       const roof=stripBetween(localPoint(d,a[0],a[1]+wallHeight,a[2]),localPoint(d,b[0],b[1]+wallHeight,b[2]),width+.08,.10,bridgeFrame);roof.name=`airport-jetway-${standNo}-roof`;this.group.add(roof);
       const centreStrip=stripBetween(localPoint(d,a[0],a[1]+wallHeight-.22,a[2]),localPoint(d,b[0],b[1]+wallHeight-.22,b[2]),.34,.06,warmLight);centreStrip.name=`airport-jetway-${standNo}-light-strip`;this.group.add(centreStrip);
@@ -722,6 +727,19 @@ export class AirportSystem{
       }
       const cabinGroup=new THREE.Group();cabinGroup.name=`airport-jetway-${standNo}-cabin`;this.group.add(cabinGroup);
       const end=points.at(-1);
+      // Fully enclosed rotunda cab at the aircraft end: the tunnel previously
+      // ended open, so passengers at the door could see daylight around them.
+      const cabZ0=aircraftDoorZ-1.30,cabZ1=aircraftDoorZ+1.30,cabX0=bridgeEndX-1.34,cabBaseY=cabinFloorY-.06,cabTopY=cabinFloorY+2.42;
+      const cabFloor=stripBetween(localPoint(d,cabX0,cabBaseY,cabZ0),localPoint(d,cabX0,cabBaseY,cabZ1),2.60,.12,bridgeFloorMat);cabFloor.name=`airport-jetway-${standNo}-cab-floor`;cabinGroup.add(cabFloor);
+      const cabRunner=stripBetween(localPoint(d,cabX0,cabBaseY+.072,aircraftDoorZ),localPoint(d,aircraftDoorX-.40,cabBaseY+.072,aircraftDoorZ),1.10,.014,material(0x3c4247,.92,.02),{cast:false});cabRunner.name=`airport-jetway-${standNo}-cab-floor-runner`;cabinGroup.add(cabRunner);
+      const cabRoof=stripBetween(localPoint(d,cabX0,cabTopY,cabZ0),localPoint(d,cabX0,cabTopY,cabZ1),2.76,.12,bridgeFrame);cabRoof.name=`airport-jetway-${standNo}-cab-roof`;cabinGroup.add(cabRoof);
+      const cabFrontWall=stripBetween(localPoint(d,aircraftDoorX-.36,cabBaseY,cabZ0),localPoint(d,aircraftDoorX-.36,cabBaseY,cabZ1),.12,cabTopY-cabBaseY,bridgeFrame);cabFrontWall.name=`airport-jetway-${standNo}-cab-front-wall`;cabinGroup.add(cabFrontWall);
+      for(const side of[-1,1]){
+        const cabSide=stripBetween(localPoint(d,cabX0,cabBaseY,aircraftDoorZ+side*1.26),localPoint(d,aircraftDoorX-.36,cabBaseY,aircraftDoorZ+side*1.26),.12,cabTopY-cabBaseY,bridgeGlass);cabSide.name=`airport-jetway-${standNo}-cab-glass-wall`;cabinGroup.add(cabSide);
+        const cabHandrail=stripBetween(localPoint(d,cabX0+.06,cabBaseY+1.08,aircraftDoorZ+side*1.20),localPoint(d,aircraftDoorX-.44,cabBaseY+1.08,aircraftDoorZ+side*1.20),.05,.05,material(0xcfd4d6,.38,.55),{cast:false});cabHandrail.name=`airport-jetway-${standNo}-cab-handrail`;cabinGroup.add(cabHandrail);
+        const cabPost=localBox(d,aircraftDoorX-.38,cabBaseY+(cabTopY-cabBaseY)*.5,aircraftDoorZ+side*1.26,.13,cabTopY-cabBaseY,.13,bridgeFrame);cabPost.name=`airport-jetway-${standNo}-cab-frame-post`;cabinGroup.add(cabPost);
+      }
+      const cabLight=stripBetween(localPoint(d,cabX0,cabTopY-.14,aircraftDoorZ),localPoint(d,aircraftDoorX-.42,cabTopY-.14,aircraftDoorZ),.32,.05,warmLight,{cast:false});cabLight.name=`airport-jetway-${standNo}-cab-light-strip`;cabinGroup.add(cabLight);
       // Flexible aircraft-mating section: the rigid cab remains clear of the
       // fuselage and a soft floor/canopy closes only the final ~0.2 m gap.
       const dockGroup=new THREE.Group();dockGroup.name=`airport-jetway-${standNo}-soft-dock`;this.group.add(dockGroup);gateWalkway.dockGroup=dockGroup;
@@ -965,7 +983,7 @@ export class AirportSystem{
   }
   groundServiceDisplayState(aircraft,type){const service=this.groundServiceState(aircraft,type);if(ACTIVE_GROUND_SERVICE_STATES.has(service.state))return{state:service.state,reason:service.state,progress:service.progress};const eligibility=this.groundServiceEligibility(aircraft,type);return{state:eligibility.available?"AVAILABLE":"UNAVAILABLE",reason:eligibility.reason,progress:0};}
   toggleGroundServiceForPlayer(type){
-    if(type!=="stairs"&&type!=="jetway")return false;const aircraft=this.passengerState?.aircraft;if(!aircraft||!this.passengerState?.pilot||!aircraft.manualControl){this.toast?.("Take the pilot seat before using ground services");return false;}
+    if(type!=="stairs"&&type!=="jetway")return false;const aircraft=this.passengerState?.aircraft;if(!aircraft||!aircraft.manualControl){this.toast?.("Board a manually controlled aircraft before using ground services");return false;}
     const service=this.groundServiceState(aircraft,type);if(ACTIVE_GROUND_SERVICE_STATES.has(service.state)){if(service.state!=="RETRACTING"){service.state="RETRACTING";service.timer=0;this.toast?.(`${type==="jetway"?"Airbridge":"Passenger stairs"} retracting`);}return true;}
     const eligibility=this.groundServiceEligibility(aircraft,type);if(!eligibility.available){this.toast?.(eligibility.reason);return true;}const {airportDef,standIndex,position}=eligibility.candidate;
     if(aircraft.currentAirportId!==airportDef.id||aircraft.standIndex!==standIndex){this.releaseStand(aircraft);if(!this.occupyStand(aircraft,airportDef.id,standIndex)){this.toast?.("Stand became occupied");return true;}aircraft.currentAirportId=airportDef.id;aircraft.standIndex=standIndex;aircraft.gateIndex=standIndex;aircraft.parkedPosition=position.clone();}
@@ -1071,7 +1089,7 @@ export class AirportSystem{
         if(input?.isDown?.("ShiftLeft")||input?.isDown?.("ShiftRight"))aircraft.manualThrottle=Math.max(0,(aircraft.manualThrottle??0)-dt*.38);
       }
     }
-    const serviceDepartureIntent=this.groundServicesBlockMovement(aircraft)&&((hasPilot&&(input?.isDown?.("Tab")||input?.isDown?.("KeyR")))||(aircraft.speed??0)>GROUND_SERVICE.stopSpeed);if(serviceDepartureIntent)this.requestGroundServiceRetraction(aircraft);this.updateGroundServices(aircraft,dt);
+    const serviceDepartureIntent=this.groundServicesBlockMovement(aircraft)&&((hasPilot&&(input?.isDown?.("Tab")||input?.isDown?.("KeyR")))||(aircraft.speed??0)>GROUND_SERVICE.stopSpeed);if(serviceDepartureIntent)this.requestGroundServiceRetraction(aircraft);
     const forwardTarget=reverseHeld?0:(aircraft.manualThrottle??0);aircraft.manualEnginePower=moveToward(aircraft.manualEnginePower??forwardTarget,forwardTarget,(forwardTarget>(aircraft.manualEnginePower??0)?MANUAL_FLIGHT.engineSpoolUp:MANUAL_FLIGHT.engineSpoolDown)*dt);
     // Mechanical/FADEC-style interlock: the reverser cannot spool until forward
     // thrust has actually returned close to idle. Holding R from high power first
@@ -1380,6 +1398,10 @@ export class AirportSystem{
       }
       this.placeAircraft(aircraft,{dt});this.enforceGroundSeparation(aircraft);
     }
+    // Ground services advance for every manual aircraft, not just the one the
+    // player is piloting, so the airbridge stays usable when the player is not
+    // on autopilot but is walking in the cabin instead of sitting in the seat.
+    for(const aircraft of this.aircraft)if(aircraft.manualControl)this.updateGroundServices(aircraft,dt);
     this.updateGateDockVisibility();this.updateIslandVisibility();this.updatePassengerRide(dt,player);
   }
 

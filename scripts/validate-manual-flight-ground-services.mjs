@@ -78,4 +78,20 @@ function stepService(airport,aircraft,seconds,hz=60){const dt=1/hz;for(let i=0;i
   const intruder=airport.aircraft[1],occupied=airport.parkedPositionFor(airport.definition,0);airport.beginManualControl(intruder);intruder.manualAirborne=false;intruder.speed=0;intruder.simPosition.copy(occupied);const eligibility=airport.groundServiceEligibility(intruder,"jetway");expect(!eligibility.available&&/occupied/i.test(eligibility.reason),`occupied jetway stand was not rejected: ${eligibility.reason}`);
 }
 
-console.log("Manual-flight/ground-services validation passed: shared cruise envelope, faster full-throttle acceleration, 30/60/120 Hz consistency, progressive wheel braking, touchdown inertia, manual/AI reverse thrust, speed-preserving handoff, player jetway/stairs connection, retraction, airborne rejection, and stand ownership.");
+// Manual mode for a non-pilot occupant: standing up from the seat and walking
+// to the door lets the player summon the airbridge and leave the plane. The
+// bridge must keep advancing even while the pilot seat is empty, through the
+// real update loop rather than a direct service-step helper.
+{
+  const airport=createAirport(),aircraft=airport.aircraft[0];airport.beginManualControl(aircraft);aircraft.speed=0;aircraft.manualAirborne=false;aircraft.simPosition.copy(aircraft.parkedPosition);
+  const player={inVehicle:false,inTrain:false,inBus:false,inAircraft:true,camera:new THREE.PerspectiveCamera(),position:new THREE.Vector3(),walkYaw:0,walkPitch:0,pendingLookDX:0,pendingLookDY:0,input:idleInput,releaseToWalking(worldFeet,yaw){this.inAircraft=false;this.camera.position.set(worldFeet.x,worldFeet.y+1.72,worldFeet.z);this.position.set(worldFeet.x,.05,worldFeet.z);this.walkYaw=yaw;}};
+  // Player is on board but not in the pilot seat (walked aft to the door).
+  airport.passengerState={aircraft,pilot:false,seated:false,cameraIndex:0,localPosition:new THREE.Vector3(.25,aircraft.mesh.userData.cabinFloorY,3.7),yaw:0,pitch:0,rideTime:0};
+  expect(airport.toggleGroundServiceForPlayer("jetway"),"non-pilot occupant in manual mode could not request the airbridge");
+  // Drive the shared update loop so services advance without a pilot aboard.
+  const dt=1/60;for(let i=0;i<Math.round(2.2/dt);i++)airport.update(dt,i*dt,player);
+  expect(airport.groundServiceState(aircraft,"jetway").state==="CONNECTED","airbridge did not connect with no pilot in the seat");expect(aircraft.doorsOpen,"door stayed closed after the airbridge connected for a non-pilot occupant");
+  expect(airport.passengerNearDoor(airport.passengerState),"non-pilot occupant at the door could not use the airbridge");expect(airport.handleInteract(player),"non-pilot occupant could not leave the manually controlled aircraft through the airbridge");expect(!player.inAircraft&&!airport.passengerState,"player remained attached after leaving through the airbridge in manual mode");
+}
+
+console.log("Manual-flight/ground-services validation passed: shared cruise envelope, faster full-throttle acceleration, 30/60/120 Hz consistency, progressive wheel braking, touchdown inertia, manual/AI reverse thrust, speed-preserving handoff, player jetway/stairs connection, retraction, airborne rejection, stand ownership, and non-pilot airbridge exit in manual mode.");
